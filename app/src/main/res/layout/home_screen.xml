@@ -22,6 +22,8 @@
         android:gravity="center_horizontal"
         android:text="@string/start_button"
         android:textColor="@color/origin_orange"
+        android:background="@drawable/custom_start_button"
+        app:backgroundTint="@null"
         tools:layout_editor_absoluteX="153dp"
         tools:layout_editor_absoluteY="375dp" />
 
