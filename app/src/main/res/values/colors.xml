@@ -2,12 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="origin_navy">#003285</color>
+    <color name="app_navy">#003285</color>
 
     <color name="origin_blue">#2A629A</color>
 
     <color name="origin_orange">#FF7F3E</color>
 
     <color name="origin_yellow">#FFDA78</color>
+    <color name="origin_navy">#000080</color>
 
 </resources>

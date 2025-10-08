@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private GoogleMap mMap;
     private Button getPieceButton;
+    private Button collectionButton; // ★★★ コンフリクト解消：collectionButtonの変数を追加 ★★★
 
     private FusedLocationProviderClient fusedLocationClient;
     private Handler locationHandler = new Handler(Looper.getMainLooper());
@@ -48,11 +49,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // --- RENTOさんの変更内容 ---
         getPieceButton = findViewById(R.id.get_piece_button);
         getPieceButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, shake_phone.class);
             startActivity(intent);
         });
+
+        // ★★★ コンフリクト解消：もう一人のメンバーの変更内容を取り込む ★★★
+        collectionButton = findViewById(R.id.collection_button);
+        collectionButton.setOnClickListener(v -> {
+            // 注意：遷移先のActivity名が不明なため、仮で `puzzle_screen.class` にしています。
+            // 実際のクラス名（例: PuzzleScreenActivity.class）に修正してください。
+            Intent intent = new Intent(MainActivity.this, puzzle_screen.class);
+            startActivity(intent);
+        });
+        // ★★★ ここまで ★★★
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -76,51 +88,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // --- 権限をチェックし、現在地表示機能を有効にする ---
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // すでに許可されている場合
             enableMyLocation();
         } else {
-            // まだ許可されていない場合、許可をリクエストする
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         }
 
-        // --- 地図の描画 (マーカー、円、境界線など) ---
         setupMapDrawings();
     }
 
-    /**
-     * 権限リクエストのダイアログでユーザーが選択した結果を受け取るメソッド
-     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // ユーザーが「許可」を選択した場合
                 enableMyLocation();
             } else {
-                // ユーザーが「許可しない」を選択した場合
                 Toast.makeText(this, "位置情報の許可がないため、現在地を表示できません", Toast.LENGTH_LONG).show();
-                // デフォルト位置（熊本高専）にカメラを移動
                 LatLng kumamotoKosen = new LatLng(32.876637, 130.74851);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kumamotoKosen, 14f));
             }
         }
     }
 
-    /**
-     * 現在地関連の機能を有効にするための処理をまとめたメソッド
-     */
     private void enableMyLocation() {
-        // (念のため再度権限をチェック)
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // 地図の「現在地ボタン」と「青い点の現在地」を有効にする
             mMap.setMyLocationEnabled(true);
-
-            // 最後に記録された現在地を取得し、そこにカメラを移動させる
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
                 if (location != null) {
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -132,9 +127,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    /**
-     * マーカー、円、境界線など、地図上の描画をまとめたメソッド
-     */
     private void setupMapDrawings() {
         LatLng countrypark = new LatLng(32.8900575, 130.7595619);
         LatLng takabajouatopark = new LatLng(32.89896389, 130.79429999);
