@@ -12,6 +12,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 /**
  * 地図を表示するためのメイン画面 (Activity)
@@ -108,6 +109,42 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // 3. これ以上ズームアウトできないように、最小ズームレベルを設定する (推奨)
         mMap.setMinZoomPreference(12.0f);
+
+        PolygonOptions koshiBorderMoreDetailed = new PolygonOptions()
+                .add(new LatLng(32.9298, 130.7655))
+                .add(new LatLng(32.9285, 130.7760))
+                .add(new LatLng(32.9221, 130.7831))
+                .add(new LatLng(32.9174, 130.7953))
+                .add(new LatLng(32.9125, 130.8093))
+                .add(new LatLng(32.9034, 130.8160))
+                .add(new LatLng(32.8943, 130.8183))
+                .add(new LatLng(32.8833, 130.8195))
+                .add(new LatLng(32.8687, 130.8203))
+                .add(new LatLng(32.8542, 130.8143))
+                .add(new LatLng(32.8480, 130.8050))
+                .add(new LatLng(32.8412, 130.7951))
+                .add(new LatLng(32.8368, 130.7752))
+                .add(new LatLng(32.8391, 130.7600))
+                .add(new LatLng(32.8446, 130.7515))
+                .add(new LatLng(32.8421, 130.7401))
+                .add(new LatLng(32.8448, 130.7303))
+                .add(new LatLng(32.8551, 130.7265))
+                .add(new LatLng(32.8633, 130.7248))
+                .add(new LatLng(32.8805, 130.7219))
+                .add(new LatLng(32.8953, 130.7314))
+                .add(new LatLng(32.9051, 130.7345))
+                .add(new LatLng(32.9108, 130.7388))
+                .add(new LatLng(32.9189, 130.7495))
+                .add(new LatLng(32.9255, 130.7578))
+                .add(new LatLng(32.9298, 130.7655)); // 始点に戻り、多角形を閉じる
+
+        // 2. 境界線の見た目を設定
+        koshiBorderMoreDetailed.strokeColor(Color.argb(220, 255, 127, 62));   // 線の色を少し透明なオレンジに (ご指定のパレットより)
+        koshiBorderMoreDetailed.strokeWidth(12f);                                // 線の太さを12に
+        koshiBorderMoreDetailed.fillColor(Color.TRANSPARENT);                   // 塗りつぶしを透明に設定
+
+        // 3. 地図にポリゴンを追加して境界線を描画
+        mMap.addPolygon(koshiBorderMoreDetailed);
 
     }
 }
