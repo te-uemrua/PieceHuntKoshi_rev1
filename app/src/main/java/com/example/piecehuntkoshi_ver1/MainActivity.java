@@ -10,32 +10,54 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-/**
- * 地図を表示するためのメイン画面 (Activity)
- * OnMapReadyCallbackインターフェースを実装(implements)するのが必須
- */
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+import android.content.Intent;
+import android.view.View;
+import android.widget.Button;
 
-    private GoogleMap mMap; // 表示するGoogleMapオブジェクトを保持する変数
+            /**
+             * 地図を表示するためのメイン画面 (Activity)
+             * OnMapReadyCallbackインターフェースを実装(implements)するのが必須
+             */
+            public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // activity_main.xmlを画面として設定
-        setContentView(R.layout.activity_main);
+                private GoogleMap mMap; // 表示するGoogleMapオブジェクトを保持する変数
 
-        // activity_main.xmlの中から、地図を表示する部品(Fragment)を探してくる
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                @Override
+                protected void onCreate(Bundle savedInstanceState) {
+                    super.onCreate(savedInstanceState);
+                    // activity_main.xmlを画面として設定
+                    setContentView(R.layout.activity_main);
 
-        // 地図の準備が非同期で完了したら、onMapReadyメソッドを呼び出すようにリクエスト
-        mapFragment.getMapAsync(this);
+                    // activity_main.xmlの中から、地図を表示する部品(Fragment)を探してくる
+                    SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                            .findFragmentById(R.id.map);
+
+                    // 地図の準備が非同期で完了したら、onMapReadyメソッドを呼び出すようにリクエスト
+                    mapFragment.getMapAsync(this);
+
+                    // --- ここからがボタンの処理 ---
+
+                    // 1. レイアウトファイルから、IDが「collection_button」のボタンを探してくる
+                    Button collectionButton = findViewById(R.id.collection_button);
+
+                    // 2. 見つけてきたボタンに「クリックされたら何をするか」という命令を設定する
+                    collectionButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) { // ← 正しい書き方
+                // 3. PuzzleScreenActivityへ画面遷移するための「チケット」を作成
+                Intent intent = new Intent(MainActivity.this, PuzzleScreenActivity.class);
+                // 4. チケットを使って画面遷移を実行する
+                startActivity(intent);
+            }
+        });
+
     }
 
     /**
      * Google Mapの準備が完了したときに、自動的に呼び出されるメソッド
      * @param googleMap 準備が完了したGoogleMapオブジェクト
      */
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
