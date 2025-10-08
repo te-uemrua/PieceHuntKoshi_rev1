@@ -45,8 +45,8 @@ public class PuzzleScreenActivity extends AppCompatActivity {
         // ここで9個分のピースデータをリストに追加する
         // 今は仮に、最初の1つだけ取得済み、残りは未取得としてデータを準備
         pieceList.add(new Piece(R.drawable.piece_1, true)); // 1番目のピース（取得済み）
-        pieceList.add(new Piece(R.drawable.piece_2, false)); // 2番目のピース（未取得）
-        pieceList.add(new Piece(R.drawable.piece_3, false));
+        pieceList.add(new Piece(R.drawable.piece_2, true)); // 2番目のピース（未取得）
+        pieceList.add(new Piece(R.drawable.piece_3, true));
         pieceList.add(new Piece(R.drawable.piece_4, false));
         pieceList.add(new Piece(R.drawable.piece_5, false));
         pieceList.add(new Piece(R.drawable.piece_6, false));
