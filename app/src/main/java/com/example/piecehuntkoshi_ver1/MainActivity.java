@@ -1,5 +1,6 @@
 package com.example.piecehuntkoshi_ver1;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
@@ -29,6 +30,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    // 権限リクエストの識別コード (任意の数字でOK)
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private GoogleMap mMap;
     private Button getPieceButton;
@@ -72,69 +76,92 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // --- ▼▼▼ 現在地表示のためのコードを追加 ▼▼▼ ---
-
-        // 1. 位置情報へのアクセス許可を再確認
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "地図機能を利用するには、位置情報の許可が必要です", Toast.LENGTH_LONG).show();
-            // TODO: ここで再度、権限をリクエストする処理を追加するのが望ましい
-            return;
+        // --- 権限をチェックし、現在地表示機能を有効にする ---
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // すでに許可されている場合
+            enableMyLocation();
+        } else {
+            // まだ許可されていない場合、許可をリクエストする
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
         }
 
-        // 2. 地図の「現在地ボタン」と「青い点の現在地」を有効にする
-        mMap.setMyLocationEnabled(true);
+        // --- 地図の描画 (マーカー、円、境界線など) ---
+        setupMapDrawings();
+    }
 
-        // 3. FusedLocationProviderClientを使って、最後に記録された現在地を取得する
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-            if (location != null) {
-                // 4. 取得した現在地にカメラを移動させる
-                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14f));
+    /**
+     * 権限リクエストのダイアログでユーザーが選択した結果を受け取るメソッド
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // ユーザーが「許可」を選択した場合
+                enableMyLocation();
             } else {
-                // もし位置情報が取得できなかった場合、デフォルトで熊本高専を表示
+                // ユーザーが「許可しない」を選択した場合
+                Toast.makeText(this, "位置情報の許可がないため、現在地を表示できません", Toast.LENGTH_LONG).show();
+                // デフォルト位置（熊本高専）にカメラを移動
                 LatLng kumamotoKosen = new LatLng(32.876637, 130.74851);
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kumamotoKosen, 14f));
-                Toast.makeText(this, "現在地が取得できませんでした", Toast.LENGTH_SHORT).show();
             }
-        });
+        }
+    }
 
-        // --- ▲▲▲ ここまで追加 ▲▲▲ ---
+    /**
+     * 現在地関連の機能を有効にするための処理をまとめたメソッド
+     */
+    private void enableMyLocation() {
+        // (念のため再度権限をチェック)
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // 地図の「現在地ボタン」と「青い点の現在地」を有効にする
+            mMap.setMyLocationEnabled(true);
 
-        //「ランドマーク」の緯度経度を指定
+            // 最後に記録された現在地を取得し、そこにカメラを移動させる
+            fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+                if (location != null) {
+                    LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14f));
+                } else {
+                    Toast.makeText(this, "現在地が取得できませんでした。位置情報設定を確認してください。", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    /**
+     * マーカー、円、境界線など、地図上の描画をまとめたメソッド
+     */
+    private void setupMapDrawings() {
         LatLng countrypark = new LatLng(32.8900575, 130.7595619);
         LatLng takabajouatopark = new LatLng(32.89896389, 130.79429999);
         LatLng ambkumamoto = new LatLng(32.880783, 130.785207);
         LatLng koshigijukuato = new LatLng(32.9163671, 130.7458907);
 
-        // 距離計算のためにランドマークと半径を保存しておく
         landmarks.put(countrypark, 500f);
         landmarks.put(takabajouatopark, 200f);
         landmarks.put(ambkumamoto, 100f);
         landmarks.put(koshigijukuato, 100f);
 
-        // ランドマークにマーカーを立てる
-        // mMap.addMarker(new MarkerOptions().position(kumamotoKosen).title("現在地 (熊本高専)")); // 現在地を表示するため、固定マーカーはコメントアウト
         mMap.addMarker(new MarkerOptions().position(countrypark).title("熊本県農業カントリーパーク"));
         mMap.addMarker(new MarkerOptions().position(takabajouatopark).title("竹迫城跡公園"));
         mMap.addMarker(new MarkerOptions().position(ambkumamoto).title("アンビー熊本"));
         mMap.addMarker(new MarkerOptions().position(koshigijukuato).title("合志義塾跡"));
 
-        // 地図に円を追加する
         mMap.addCircle(new CircleOptions().center(countrypark).radius(500).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
         mMap.addCircle(new CircleOptions().center(takabajouatopark).radius(200).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
         mMap.addCircle(new CircleOptions().center(ambkumamoto).radius(100).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
         mMap.addCircle(new CircleOptions().center(koshigijukuato).radius(100).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
 
-        // 地図にスクロール範囲を設定する
         LatLng southWest = new LatLng(32.84, 130.72);
         LatLng northEast = new LatLng(32.93, 130.82);
         LatLngBounds koshiBounds = new LatLngBounds(southWest, northEast);
         mMap.setLatLngBoundsForCameraTarget(koshiBounds);
-
-        // これ以上ズームアウトできないように、最小ズームレベルを設定する (推奨)
         mMap.setMinZoomPreference(12.0f);
 
-        // 地図にポリゴンを追加して境界線を描画
         PolygonOptions koshiBorderMoreDetailed = new PolygonOptions()
                 .add(new LatLng(32.9298, 130.7655)).add(new LatLng(32.9285, 130.7760))
                 .add(new LatLng(32.9221, 130.7831)).add(new LatLng(32.9174, 130.7953))
@@ -160,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void run() {
                 checkDistanceToLandmarks();
-                locationHandler.postDelayed(this, 5000); // 5秒ごとに繰り返す
+                locationHandler.postDelayed(this, 5000);
             }
         };
         locationHandler.post(locationCheckRunnable);
@@ -174,7 +201,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void checkDistanceToLandmarks() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(this, "位置情報へのアクセスを許可してください", Toast.LENGTH_SHORT).show();
             return;
         }
 
