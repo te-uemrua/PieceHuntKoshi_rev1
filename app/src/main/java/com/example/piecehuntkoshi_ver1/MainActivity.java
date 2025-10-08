@@ -45,16 +45,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // --- ここから地図に対する操作を記述 ---
 
         // 1. とりあえずの表示位置として「熊本県農業カントリーパーク」の緯度経度を指定
-        LatLng koshiCityHall = new LatLng(32.8900575, 130.7595619);
+        LatLng kumamotoKosen = new LatLng(32.876637,130.74851);
+        LatLng countrypark = new LatLng(32.8900575, 130.7595619);
 
         // 2. その位置にマーカー（ピン）を立てる
-        mMap.addMarker(new MarkerOptions().position(koshiCityHall).title("熊本県農業カントリーパーク"));
+        mMap.addMarker(new MarkerOptions().position(countrypark).title("熊本県農業カントリーパーク"));
+        mMap.addMarker(new MarkerOptions().position(kumamotoKosen).title("現在地 (熊本高専)"));
 
-        // 3. 指定した座標にカメラを移動させる（ズームレベルは15）
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(koshiCityHall, 14f));
+        // 3. 指定した座標にカメラを移動させる（ズームレベルは14）
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kumamotoKosen, 14f));
+
 
         CircleOptions circleOptions = new CircleOptions()
-                .center(koshiCityHall)  // 円の中心座標
+                .center(countrypark)  // 円の中心座標
                 .radius(500)           // 半径 (メートル単位)
                 .strokeColor(Color.RED) // 線の色 (赤)
                 .strokeWidth(5f)        // 線の太さ
@@ -62,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         // 2. 地図に円を追加する
         mMap.addCircle(circleOptions);
+
+
 
     }
 }
