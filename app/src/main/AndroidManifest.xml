@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PieceHuntKoshi_ver1">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -20,6 +21,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".home_screen"
+            android:exported="false" />
+
+        <activity
+            android:name=".puzzle_screen"
+            android:exported="false" />
+
+        <activity
+            android:name=".shake_phone"
+            android:exported="false" />
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyC_jLK17ngHNCUDsHtmsxiJKM-KXa1VDDk" />
+
     </application>
 
 </manifest>
