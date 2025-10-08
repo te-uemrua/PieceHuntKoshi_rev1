@@ -72,12 +72,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        // --- ▼▼▼ 現在地表示のためのコードを追加 ▼▼▼ ---
+
+        // 1. 位置情報へのアクセス許可を再確認
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "地図機能を利用するには、位置情報の許可が必要です", Toast.LENGTH_LONG).show();
+            // TODO: ここで再度、権限をリクエストする処理を追加するのが望ましい
+            return;
+        }
+
+        // 2. 地図の「現在地ボタン」と「青い点の現在地」を有効にする
+        mMap.setMyLocationEnabled(true);
+
+        // 3. FusedLocationProviderClientを使って、最後に記録された現在地を取得する
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                // 4. 取得した現在地にカメラを移動させる
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14f));
+            } else {
+                // もし位置情報が取得できなかった場合、デフォルトで熊本高専を表示
+                LatLng kumamotoKosen = new LatLng(32.876637, 130.74851);
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kumamotoKosen, 14f));
+                Toast.makeText(this, "現在地が取得できませんでした", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // --- ▲▲▲ ここまで追加 ▲▲▲ ---
+
         //「ランドマーク」の緯度経度を指定
-        LatLng kumamotoKosen = new LatLng(32.876637,130.74851);
         LatLng countrypark = new LatLng(32.8900575, 130.7595619);
-        LatLng takabajouatopark = new LatLng(32.89896389,130.79429999);
-        LatLng ambkumamoto = new LatLng(32.880783,130.785207);
-        LatLng koshigijukuato = new LatLng(32.9163671,130.7458907);
+        LatLng takabajouatopark = new LatLng(32.89896389, 130.79429999);
+        LatLng ambkumamoto = new LatLng(32.880783, 130.785207);
+        LatLng koshigijukuato = new LatLng(32.9163671, 130.7458907);
 
         // 距離計算のためにランドマークと半径を保存しておく
         landmarks.put(countrypark, 500f);
@@ -86,14 +113,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         landmarks.put(koshigijukuato, 100f);
 
         // ランドマークにマーカーを立てる
-        mMap.addMarker(new MarkerOptions().position(kumamotoKosen).title("現在地 (熊本高専)"));
+        // mMap.addMarker(new MarkerOptions().position(kumamotoKosen).title("現在地 (熊本高専)")); // 現在地を表示するため、固定マーカーはコメントアウト
         mMap.addMarker(new MarkerOptions().position(countrypark).title("熊本県農業カントリーパーク"));
         mMap.addMarker(new MarkerOptions().position(takabajouatopark).title("竹迫城跡公園"));
         mMap.addMarker(new MarkerOptions().position(ambkumamoto).title("アンビー熊本"));
         mMap.addMarker(new MarkerOptions().position(koshigijukuato).title("合志義塾跡"));
-
-        // 指定した座標にカメラを移動させる（ズームレベルは14）
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kumamotoKosen, 14f));
 
         // 地図に円を追加する
         mMap.addCircle(new CircleOptions().center(countrypark).radius(500).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
