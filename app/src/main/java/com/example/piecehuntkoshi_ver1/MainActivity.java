@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         collectionButton.setOnClickListener(v -> {
             // 注意：遷移先のActivity名が不明なため、仮で `puzzle_screen.class` にしています。
             // 実際のクラス名（例: PuzzleScreenActivity.class）に修正してください。
-            Intent intent = new Intent(MainActivity.this, puzzle_screen.class);
+            Intent intent = new Intent(MainActivity.this, PuzzleScreenActivity.class);
             startActivity(intent);
         });
         // ★★★ ここまで ★★★
