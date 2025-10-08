@@ -1,23 +1,20 @@
-package com.example.piecehuntkoshi_ver1; // あなたのパッケージ名に合わせてください
+package com.example.piecehuntkoshi_ver1;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -28,41 +25,52 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-
-/**
- * 地図を表示するためのメイン画面 (Activity)
- * OnMapReadyCallbackインターフェースを実装(implements)するのが必須
- */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    private GoogleMap mMap; // 表示するGoogleMapオブジェクトを保持する変数
+    private GoogleMap mMap;
+    private Button getPieceButton;
+
+    private FusedLocationProviderClient fusedLocationClient;
+    private Handler locationHandler = new Handler(Looper.getMainLooper());
+    private Runnable locationCheckRunnable;
+    private Map<LatLng, Float> landmarks = new HashMap<>();
+    private boolean isInLandmarkArea = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // activity_main.xmlを画面として設定
         setContentView(R.layout.activity_main);
 
-        // activity_main.xmlの中から、地図を表示する部品(Fragment)を探してくる
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        getPieceButton = findViewById(R.id.get_piece_button);
+        getPieceButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, shake_phone.class);
+            startActivity(intent);
+        });
 
-        // 地図の準備が非同期で完了したら、onMapReadyメソッドを呼び出すようにリクエスト
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-    /**
-     * Google Mapの準備が完了したときに、自動的に呼び出されるメソッド
-     * @param googleMap 準備が完了したGoogleMapオブジェクト
-     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        startLocationChecks();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopLocationChecks();
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // --- ここから地図に対する操作を記述 ---
 
         //「ランドマーク」の緯度経度を指定
         LatLng kumamotoKosen = new LatLng(32.876637,130.74851);
@@ -71,98 +79,108 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng ambkumamoto = new LatLng(32.880783,130.785207);
         LatLng koshigijukuato = new LatLng(32.9163671,130.7458907);
 
-        // 2.ランドマークにマーカーを立てる
+        // 距離計算のためにランドマークと半径を保存しておく
+        landmarks.put(countrypark, 500f);
+        landmarks.put(takabajouatopark, 200f);
+        landmarks.put(ambkumamoto, 100f);
+        landmarks.put(koshigijukuato, 100f);
+
+        // ランドマークにマーカーを立てる
         mMap.addMarker(new MarkerOptions().position(kumamotoKosen).title("現在地 (熊本高専)"));
         mMap.addMarker(new MarkerOptions().position(countrypark).title("熊本県農業カントリーパーク"));
         mMap.addMarker(new MarkerOptions().position(takabajouatopark).title("竹迫城跡公園"));
         mMap.addMarker(new MarkerOptions().position(ambkumamoto).title("アンビー熊本"));
         mMap.addMarker(new MarkerOptions().position(koshigijukuato).title("合志義塾跡"));
 
-
-
-        // 3. 指定した座標にカメラを移動させる（ズームレベルは15）
+        // 指定した座標にカメラを移動させる（ズームレベルは14）
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(kumamotoKosen, 14f));
 
+        // 地図に円を追加する
+        mMap.addCircle(new CircleOptions().center(countrypark).radius(500).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
+        mMap.addCircle(new CircleOptions().center(takabajouatopark).radius(200).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
+        mMap.addCircle(new CircleOptions().center(ambkumamoto).radius(100).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
+        mMap.addCircle(new CircleOptions().center(koshigijukuato).radius(100).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
 
-        CircleOptions circleOptions1 = new CircleOptions()
-                .center(countrypark)  // 円の中心座標
-                .radius(500)           // 半径 (メートル単位)
-                .strokeColor(Color.RED) // 線の色 (赤)
-                .strokeWidth(5f)        // 線の太さ
-                .fillColor(0x55ff0000); // 塗りつぶしの色 (半透明の赤)
-
-        CircleOptions circleOptions2 = new CircleOptions()
-                .center(takabajouatopark)  // 円の中心座標
-                .radius(200)           // 半径 (メートル単位)
-                .strokeColor(Color.RED) // 線の色 (赤)
-                .strokeWidth(5f)        // 線の太さ
-                .fillColor(0x55ff0000); // 塗りつぶしの色 (半透明の赤)
-
-        CircleOptions circleOptions3 = new CircleOptions()
-                .center(ambkumamoto)  // 円の中心座標
-                .radius(100)           // 半径 (メートル単位)
-                .strokeColor(Color.RED) // 線の色 (赤)
-                .strokeWidth(5f)        // 線の太さ
-                .fillColor(0x55ff0000); // 塗りつぶしの色 (半透明の赤)
-
-        CircleOptions circleOptions4 = new CircleOptions()
-                .center(koshigijukuato)  // 円の中心座標
-                .radius(100)           // 半径 (メートル単位)
-                .strokeColor(Color.RED) // 線の色 (赤)
-                .strokeWidth(5f)        // 線の太さ
-                .fillColor(0x55ff0000); // 塗りつぶしの色 (半透明の赤)
-
-        // 2. 地図に円を追加する
-        mMap.addCircle(circleOptions1);
-        mMap.addCircle(circleOptions2);
-        mMap.addCircle(circleOptions3);
-        mMap.addCircle(circleOptions4);
-
-        LatLng southWest = new LatLng(32.84, 130.72); // 合志市の南西の角 (おおよその座標)
-        LatLng northEast = new LatLng(32.93, 130.82); // 合志市の北東の角 (おおよその座標)
+        // 地図にスクロール範囲を設定する
+        LatLng southWest = new LatLng(32.84, 130.72);
+        LatLng northEast = new LatLng(32.93, 130.82);
         LatLngBounds koshiBounds = new LatLngBounds(southWest, northEast);
-
-        // 2. 地図にスクロール範囲を設定する
         mMap.setLatLngBoundsForCameraTarget(koshiBounds);
 
-        // 3. これ以上ズームアウトできないように、最小ズームレベルを設定する (推奨)
+        // これ以上ズームアウトできないように、最小ズームレベルを設定する (推奨)
         mMap.setMinZoomPreference(12.0f);
 
+        // 地図にポリゴンを追加して境界線を描画
         PolygonOptions koshiBorderMoreDetailed = new PolygonOptions()
-                .add(new LatLng(32.9298, 130.7655))
-                .add(new LatLng(32.9285, 130.7760))
-                .add(new LatLng(32.9221, 130.7831))
-                .add(new LatLng(32.9174, 130.7953))
-                .add(new LatLng(32.9125, 130.8093))
-                .add(new LatLng(32.9034, 130.8160))
-                .add(new LatLng(32.8943, 130.8183))
-                .add(new LatLng(32.8833, 130.8195))
-                .add(new LatLng(32.8687, 130.8203))
-                .add(new LatLng(32.8542, 130.8143))
-                .add(new LatLng(32.8480, 130.8050))
-                .add(new LatLng(32.8412, 130.7951))
-                .add(new LatLng(32.8368, 130.7752))
-                .add(new LatLng(32.8391, 130.7600))
-                .add(new LatLng(32.8446, 130.7515))
-                .add(new LatLng(32.8421, 130.7401))
-                .add(new LatLng(32.8448, 130.7303))
-                .add(new LatLng(32.8551, 130.7265))
-                .add(new LatLng(32.8633, 130.7248))
-                .add(new LatLng(32.8805, 130.7219))
-                .add(new LatLng(32.8953, 130.7314))
-                .add(new LatLng(32.9051, 130.7345))
-                .add(new LatLng(32.9108, 130.7388))
-                .add(new LatLng(32.9189, 130.7495))
-                .add(new LatLng(32.9255, 130.7578))
-                .add(new LatLng(32.9298, 130.7655)); // 始点に戻り、多角形を閉じる
-
-        // 2. 境界線の見た目を設定
-        koshiBorderMoreDetailed.strokeColor(Color.argb(220, 255, 127, 62));   // 線の色を少し透明なオレンジに (ご指定のパレットより)
-        koshiBorderMoreDetailed.strokeWidth(12f);                                // 線の太さを12に
-        koshiBorderMoreDetailed.fillColor(Color.TRANSPARENT);                   // 塗りつぶしを透明に設定
-
-        // 3. 地図にポリゴンを追加して境界線を描画
+                .add(new LatLng(32.9298, 130.7655)).add(new LatLng(32.9285, 130.7760))
+                .add(new LatLng(32.9221, 130.7831)).add(new LatLng(32.9174, 130.7953))
+                .add(new LatLng(32.9125, 130.8093)).add(new LatLng(32.9034, 130.8160))
+                .add(new LatLng(32.8943, 130.8183)).add(new LatLng(32.8833, 130.8195))
+                .add(new LatLng(32.8687, 130.8203)).add(new LatLng(32.8542, 130.8143))
+                .add(new LatLng(32.8480, 130.8050)).add(new LatLng(32.8412, 130.7951))
+                .add(new LatLng(32.8368, 130.7752)).add(new LatLng(32.8391, 130.7600))
+                .add(new LatLng(32.8446, 130.7515)).add(new LatLng(32.8421, 130.7401))
+                .add(new LatLng(32.8448, 130.7303)).add(new LatLng(32.8551, 130.7265))
+                .add(new LatLng(32.8633, 130.7248)).add(new LatLng(32.8805, 130.7219))
+                .add(new LatLng(32.8953, 130.7314)).add(new LatLng(32.9051, 130.7345))
+                .add(new LatLng(32.9108, 130.7388)).add(new LatLng(32.9189, 130.7495))
+                .add(new LatLng(32.9255, 130.7578)).add(new LatLng(32.9298, 130.7655));
+        koshiBorderMoreDetailed.strokeColor(Color.argb(220, 255, 127, 62));
+        koshiBorderMoreDetailed.strokeWidth(12f);
+        koshiBorderMoreDetailed.fillColor(Color.TRANSPARENT);
         mMap.addPolygon(koshiBorderMoreDetailed);
+    }
 
+    private void startLocationChecks() {
+        locationCheckRunnable = new Runnable() {
+            @Override
+            public void run() {
+                checkDistanceToLandmarks();
+                locationHandler.postDelayed(this, 5000); // 5秒ごとに繰り返す
+            }
+        };
+        locationHandler.post(locationCheckRunnable);
+    }
+
+    private void stopLocationChecks() {
+        if (locationCheckRunnable != null) {
+            locationHandler.removeCallbacks(locationCheckRunnable);
+        }
+    }
+
+    private void checkDistanceToLandmarks() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(this, "位置情報へのアクセスを許可してください", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location == null) return;
+
+            boolean currentlyInArea = false;
+            for (Map.Entry<LatLng, Float> entry : landmarks.entrySet()) {
+                LatLng landmarkLocation = entry.getKey();
+                float radius = entry.getValue();
+
+                float[] results = new float[1];
+                Location.distanceBetween(location.getLatitude(), location.getLongitude(), landmarkLocation.latitude, landmarkLocation.longitude, results);
+                float distanceInMeters = results[0];
+
+                if (distanceInMeters < radius) {
+                    currentlyInArea = true;
+                    break;
+                }
+            }
+
+            if (currentlyInArea && !isInLandmarkArea) {
+                getPieceButton.setVisibility(View.VISIBLE);
+                Toast.makeText(MainActivity.this, "ランドマークエリアに入りました！", Toast.LENGTH_SHORT).show();
+                isInLandmarkArea = true;
+            } else if (!currentlyInArea && isInLandmarkArea) {
+                getPieceButton.setVisibility(View.GONE);
+                Toast.makeText(MainActivity.this, "ランドマークエリアから出ました。", Toast.LENGTH_SHORT).show();
+                isInLandmarkArea = false;
+            }
+        });
     }
 }
