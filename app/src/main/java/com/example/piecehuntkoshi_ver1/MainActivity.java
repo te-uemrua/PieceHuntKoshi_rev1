@@ -50,12 +50,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLng countrypark = new LatLng(32.8900575, 130.7595619);
         LatLng takabajouatopark = new LatLng(32.89896389,130.79429999);
         LatLng ambkumamoto = new LatLng(32.880783,130.785207);
+        LatLng koshigijukuato = new LatLng(32.9163671,130.7458907);
 
         // 2.ランドマークにマーカーを立てる
         mMap.addMarker(new MarkerOptions().position(kumamotoKosen).title("現在地 (熊本高専)"));
         mMap.addMarker(new MarkerOptions().position(countrypark).title("熊本県農業カントリーパーク"));
         mMap.addMarker(new MarkerOptions().position(takabajouatopark).title("竹迫城跡公園"));
         mMap.addMarker(new MarkerOptions().position(ambkumamoto).title("アンビー熊本"));
+        mMap.addMarker(new MarkerOptions().position(koshigijukuato).title("合志義塾跡"));
 
 
 
@@ -72,14 +74,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         CircleOptions circleOptions2 = new CircleOptions()
                 .center(takabajouatopark)  // 円の中心座標
-                .radius(500)           // 半径 (メートル単位)
+                .radius(200)           // 半径 (メートル単位)
                 .strokeColor(Color.RED) // 線の色 (赤)
                 .strokeWidth(5f)        // 線の太さ
                 .fillColor(0x55ff0000); // 塗りつぶしの色 (半透明の赤)
 
         CircleOptions circleOptions3 = new CircleOptions()
                 .center(ambkumamoto)  // 円の中心座標
-                .radius(500)           // 半径 (メートル単位)
+                .radius(100)           // 半径 (メートル単位)
+                .strokeColor(Color.RED) // 線の色 (赤)
+                .strokeWidth(5f)        // 線の太さ
+                .fillColor(0x55ff0000); // 塗りつぶしの色 (半透明の赤)
+
+        CircleOptions circleOptions4 = new CircleOptions()
+                .center(koshigijukuato)  // 円の中心座標
+                .radius(100)           // 半径 (メートル単位)
                 .strokeColor(Color.RED) // 線の色 (赤)
                 .strokeWidth(5f)        // 線の太さ
                 .fillColor(0x55ff0000); // 塗りつぶしの色 (半透明の赤)
@@ -88,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.addCircle(circleOptions1);
         mMap.addCircle(circleOptions2);
         mMap.addCircle(circleOptions3);
+        mMap.addCircle(circleOptions4);
 
         LatLng southWest = new LatLng(32.84, 130.72); // 合志市の南西の角 (おおよその座標)
         LatLng northEast = new LatLng(32.93, 130.82); // 合志市の北東の角 (おおよその座標)
