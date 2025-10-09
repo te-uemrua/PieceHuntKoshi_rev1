@@ -1,4 +1,4 @@
-package com.example.piecehuntkoshi_ver1;
+/*package com.example.piecehuntkoshi_ver1;
 
 import android.os.Bundle;
 
@@ -20,5 +20,21 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+}*/
+package com.example.piecehuntkoshi_ver1;
+
+import android.content.Intent;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // MainActivity自体はUIなし、起動したらHomeScreenへ遷移するだけ
+        Intent intent = new Intent(this, home_screen.class);
+        startActivity(intent);
+        finish(); // MainActivityは終了して戻れないようにする場合
     }
 }
