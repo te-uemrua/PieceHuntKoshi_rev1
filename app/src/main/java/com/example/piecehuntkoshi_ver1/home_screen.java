@@ -1,50 +1,106 @@
 package com.example.piecehuntkoshi_ver1;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.os.Bundle;
-import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Looper;
+import android.provider.Settings;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 
 public class home_screen extends AppCompatActivity {
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
+    private FusedLocationProviderClient fusedLocationClient;
+    private boolean requestingLocationUpdates = false;
 
-    private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private TextView textView1, textView2;
+
+    private final ActivityResultLauncher<String>
+            requestPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            isGranted -> {
+                //⑦ ユーザーが権限を許可したか
+                if (isGranted) {
+                    //⑧a 制限された機能にアクセスする
+                    requestingLocationUpdates = true;
+                } else {
+                    //⑧b 制限された機能が無いままで継続
+                    toastMake(R.string.message2);
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.home_screen);  // home_screen.xmlをセット
+        setContentView(R.layout.home_screen);
 
-        checkLocationPermission();
-    }
+        Button button = findViewById(R.id.button);
+        //③ リクエストが必要になるまで待機");
 
-    private void checkLocationPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
-        } else {
-            Toast.makeText(this, "位置情報の権限は既に許可されています", Toast.LENGTH_SHORT).show();
-        }
-    }
+        button.setOnClickListener(v -> {
+            //④ 権限が既に付与されているか
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED) {
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "位置情報の権限が許可されました", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "位置情報の権限が拒否されました", Toast.LENGTH_SHORT).show();
+                //⑧a 制限された機能にアクセスする
+                requestingLocationUpdates = true;
             }
-        }
+            //⑤a 権限の根拠を示す必要があるか
+            else if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                //⑤b 権限が必要な理由・メリットを説明
+                builder.setMessage(R.string.alert_dialog)
+                        .setPositiveButton(R.string.ok, (dialog, id) ->
+                                requestPermissionLauncher.launch(
+                                        Manifest.permission.ACCESS_FINE_LOCATION))
+                        .setNegativeButton(R.string.no_thanks, (dialog, id) ->
+                                toastMake(R.string.message1));
+                builder.create();
+                builder.show();
+
+            } else {
+                //⑥ システム権限を要求する
+                requestPermissionLauncher.launch(
+                        Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+        });
+
+        Button button2 = findViewById(R.id.button2);
+        button2.setOnClickListener(v -> {
+            // アプリのSetting画面を開く
+            String uriString = "package:" + getPackageName();
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.parse(uriString));
+            startActivity(intent);
+        });
+
+
+    }
+
+    private void toastMake(int str) {
+        Toast toast = Toast.makeText(this, str, Toast.LENGTH_SHORT);
+        toast.show();
+
     }
 }
