@@ -2,36 +2,20 @@ package com.example.piecehuntkoshi_ver1;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.provider.Settings;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 
 public class home_screen extends AppCompatActivity {
-    private LocationCallback locationCallback;
-    private LocationRequest locationRequest;
-    private FusedLocationProviderClient fusedLocationClient;
     private boolean requestingLocationUpdates = false;
-
-    private TextView textView1, textView2;
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
