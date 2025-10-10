@@ -36,10 +36,6 @@ public class home_screen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
 
-        Button button = findViewById(R.id.button);
-        //③ リクエストが必要になるまで待機");
-
-        button.setOnClickListener(v -> {
             //④ 権限が既に付与されているか
             if (ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
@@ -68,7 +64,6 @@ public class home_screen extends AppCompatActivity {
                 requestPermissionLauncher.launch(
                         Manifest.permission.ACCESS_FINE_LOCATION);
             }
-        });
 
         Button button2 = findViewById(R.id.button2);
         button2.setOnClickListener(v -> {
@@ -79,6 +74,11 @@ public class home_screen extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button start_button = findViewById(R.id.start_button);
+        start_button.setOnClickListener( v -> {
+            Intent intent = new Intent(home_screen.this,MainActivity.class);
+            startActivity(intent);
+        });
 
     }
 
