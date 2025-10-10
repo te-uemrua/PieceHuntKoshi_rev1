@@ -74,6 +74,11 @@ public class home_screen extends AppCompatActivity {
             startActivity(intent);
         });
 
+        Button start_button = findViewById(R.id.start_button);
+        start_button.setOnClickListener( v -> {
+            Intent intent = new Intent(home_screen.this,MainActivity.class);
+            startActivity(intent);
+        });
 
     }
 
