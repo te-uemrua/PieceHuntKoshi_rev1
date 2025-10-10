@@ -10,5 +10,6 @@
 
     <color name="origin_yellow">#FFDA78</color>
     <color name="origin_navy">#000080</color>
+    <color name="gray">#808080</color>
 
 </resources>

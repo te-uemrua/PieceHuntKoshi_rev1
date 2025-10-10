@@ -18,7 +18,7 @@
             android:name=".PuzzleScreenActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".home_screen"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".home_screen"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".puzzle_screen"
