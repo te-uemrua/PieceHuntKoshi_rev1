@@ -47,12 +47,12 @@ public class PuzzleScreenActivity extends AppCompatActivity {
         pieceList.add(new Piece(R.drawable.piece_1, true)); // 1番目のピース（取得済み）
         pieceList.add(new Piece(R.drawable.piece_2, true)); // 2番目のピース（未取得）
         pieceList.add(new Piece(R.drawable.piece_3, true));
-        pieceList.add(new Piece(R.drawable.piece_4, false));
-        pieceList.add(new Piece(R.drawable.piece_5, false));
-        pieceList.add(new Piece(R.drawable.piece_6, false));
-        pieceList.add(new Piece(R.drawable.piece_7, false));
-        pieceList.add(new Piece(R.drawable.piece_8, false));
-        pieceList.add(new Piece(R.drawable.piece_9, false));
+        pieceList.add(new Piece(R.drawable.piece_4, true));
+        pieceList.add(new Piece(R.drawable.piece_5, true));
+        pieceList.add(new Piece(R.drawable.piece_6, true));
+        pieceList.add(new Piece(R.drawable.piece_7, true));
+        pieceList.add(new Piece(R.drawable.piece_8, true));
+        pieceList.add(new Piece(R.drawable.piece_9, true));
         // 注意： R.drawable.piece_1 や R.drawable.piece_2 などの画像ファイルを
         // あなたがプロジェクトの res/drawable フォルダに用意する必要があります。
         // もし画像がまだなければ、コンパイルエラーになります。
