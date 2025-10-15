@@ -1,33 +1,30 @@
 package com.example.piecehuntkoshi_ver1;
 
 public class Piece {
-    //メンバ変数
-    private int pieceResourceId;
-    private boolean isAcquired;
+    //  すべてのフィールドをfinalにして、変更不可能なクラスにする
+    private final int id;
+    private final int pieceResourceId;
+    private final boolean isAcquired;
 
-    //コンストラクタ
-    public Piece(int pieceResourceId, boolean isAcquired){
+    public Piece(int id, int pieceResourceId, boolean isAcquired) {
+        this.id = id;
         this.pieceResourceId = pieceResourceId;
         this.isAcquired = isAcquired;
     }
 
-    //ゲッター
-    public int getPieceResourceId(){
-        return this.pieceResourceId;
+    // getId() は将来データベースの主キーとして使うため、警告が出ていても残しておきます
+    public int getId() {
+        return id;
     }
 
-    public boolean isAcquired(){
-        return this.isAcquired;
+    public int getPieceResourceId() {
+        return pieceResourceId;
     }
 
-    //セッター
-    public void setPieceResourceId(int pieceResourceId){
-        this.pieceResourceId = pieceResourceId;
-    }
-
-    public void setAcquired(boolean isAcquired){
-        this.isAcquired = isAcquired;
+    public boolean isAcquired() {
+        return isAcquired;
     }
 
 
 }
+
