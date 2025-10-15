@@ -1,14 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@android:color/white"  tools:context=".PuzzleScreenActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/puzzleRecyclerView"
+    <!-- 1. マップ画面と同じデザインのヘッダーをここに追加 -->
+    <LinearLayout
+        android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:background="@color/origin_blue"
+        android:orientation="vertical"
+        android:padding="30dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="現在のパズル"
+            android:textColor="@color/origin_orange"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/remaining_pieces_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/origin_yellow"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            tools:text="あと5枚で完成！" />
+
+    </LinearLayout>
+
+    <!-- 2. パズル本体（RecyclerView） -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/puzzleRecyclerView"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"
+        android:padding="16dp"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="3"
+        tools:listitem="@layout/piece_item" />
+
+    <!-- 3. マップ画面に戻るボタンなどを下部に配置 -->
+    <Button
+        android:id="@+id/back_to_map_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bordered_button_background"
+        android:text="マップに戻る"
+        android:textColor="@color/origin_orange"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </LinearLayout>

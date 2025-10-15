@@ -1,8 +1,9 @@
 package com.example.piecehuntkoshi_ver1;
 
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -10,51 +11,90 @@ import java.util.List;
 
 public class PuzzleScreenActivity extends AppCompatActivity {
 
-    // メンバー変数としてRecyclerViewとAdapterを宣言
-    private RecyclerView puzzleRecyclerView;
-    private PuzzleAdapter puzzleAdapter;
-    private List<Piece> pieceList;
+    // private RecyclerView puzzleRecyclerView;
+    // private PuzzleAdapter puzzleAdapter;
+    // private List<Piece> pieceList;
+    // private TextView remainingPiecesText;
+    // private Button backToMapButton;
+
+    // PuzzleScreenActivity.java
+
+// ... (他の部分は変更なし) ...
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // このActivityで表示するレイアウトファイルを指定
         setContentView(R.layout.puzzle_screen);
 
-        // 1. レイアウトファイルからRecyclerViewの部品を見つけてくる
-        puzzleRecyclerView = findViewById(R.id.puzzleRecyclerView);
+        // ... (変数の宣言などは変更なし) ...
+        RecyclerView puzzleRecyclerView = findViewById(R.id.puzzleRecyclerView);
+        TextView remainingPiecesText = findViewById(R.id.remaining_pieces_text);
+        Button backToMapButton = findViewById(R.id.back_to_map_button);
 
-        // 2. 表示するためのピースのデータリストを作成する
-        initializePieceList();
-
-        // 3. アダプターを作成し、ピースのリストを渡す
-        puzzleAdapter = new PuzzleAdapter(pieceList);
-
-        // 4. RecyclerViewに「3列のグリッド表示」で表示するように設定する
+        List<Piece> pieceList = initializePieceList();
+        PuzzleAdapter puzzleAdapter = new PuzzleAdapter(pieceList);
         puzzleRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-
-        // 5. RecyclerViewにアダプターを設定する（これで初めて画面に表示される）
         puzzleRecyclerView.setAdapter(puzzleAdapter);
+
+        // 6. ★★★ パズルの状態をチェックして、メッセージを表示（strings.xml を使用） ★★★
+        if (isPuzzleComplete(pieceList)) {
+            // R.string.puzzle_complete を使って文字列を設定
+            remainingPiecesText.setText(getString(R.string.puzzle_complete));
+        } else {
+            int remainingCount = getRemainingPieceCount(pieceList);
+            // R.string.remaining_pieces_format をテンプレートとして使い、remainingCountを渡す
+            String formattedText = getString(R.string.remaining_pieces_format, remainingCount);
+            remainingPiecesText.setText(formattedText);
+        }
+
+        // 7. ★★★「マップに戻る」ボタンの処理を、より簡潔なラムダ式に修正 ★★★
+        backToMapButton.setOnClickListener(v -> finish());
     }
+
+// ... (他のメソッドは変更なし) ...
 
     /**
      * 9個のパズルピースのリストを初期化するメソッド
+     * @return pieceList
      */
-    private void initializePieceList() {
-        pieceList = new ArrayList<>();
-        // ここで9個分のピースデータをリストに追加する
-        // 今は仮に、最初の1つだけ取得済み、残りは未取得としてデータを準備
-        pieceList.add(new Piece(R.drawable.piece_1, true)); // 1番目のピース（取得済み）
-        pieceList.add(new Piece(R.drawable.piece_2, true)); // 2番目のピース（未取得）
-        pieceList.add(new Piece(R.drawable.piece_3, true));
-        pieceList.add(new Piece(R.drawable.piece_4, true));
-        pieceList.add(new Piece(R.drawable.piece_5, true));
-        pieceList.add(new Piece(R.drawable.piece_6, true));
-        pieceList.add(new Piece(R.drawable.piece_7, true));
-        pieceList.add(new Piece(R.drawable.piece_8, true));
-        pieceList.add(new Piece(R.drawable.piece_9, true));
-        // 注意： R.drawable.piece_1 や R.drawable.piece_2 などの画像ファイルを
-        // あなたがプロジェクトの res/drawable フォルダに用意する必要があります。
-        // もし画像がまだなければ、コンパイルエラーになります。
+    private List<Piece> initializePieceList() { // ★戻り値の型をList<Piece>に変更
+        List<Piece> localPieceList = new ArrayList<>();
+        // ... (中身は同じ)
+        localPieceList.add(new Piece(0, R.drawable.piece_1, true));
+        localPieceList.add(new Piece(1, R.drawable.piece_2, true));
+        localPieceList.add(new Piece(2, R.drawable.piece_3, true));
+        localPieceList.add(new Piece(3, R.drawable.piece_4, true));
+        localPieceList.add(new Piece(4, R.drawable.piece_5, true));
+        localPieceList.add(new Piece(5, R.drawable.piece_6, true));
+        localPieceList.add(new Piece(6, R.drawable.piece_7, true));
+        localPieceList.add(new Piece(7, R.drawable.piece_8, true));
+        localPieceList.add(new Piece(8, R.drawable.piece_9, false));
+        return localPieceList; // ★作成したリストを返す
+    }
+
+    /**
+     * パズルが完成したかチェックするメソッド
+     */
+    private boolean isPuzzleComplete(List<Piece> pieces) { // ★引数でリストを受け取る
+        for (Piece piece : pieces) {
+            if (!piece.isAcquired()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 残りの未取得ピースの数を数えるメソッド
+     * @return 残りのピース数
+     */
+    private int getRemainingPieceCount(List<Piece> pieces) { // ★引数でリストを受け取る
+        int remainingCount = 0;
+        for (Piece piece : pieces) {
+            if (!piece.isAcquired()) {
+                remainingCount++;
+            }
+        }
+        return remainingCount;
     }
 }
