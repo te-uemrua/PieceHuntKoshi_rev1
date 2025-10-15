@@ -48,7 +48,7 @@
         android:padding="16dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"
-        tools:listitem="@layout/piece_item_layout" />
+        tools:listitem="@layout/piece_item" />
 
     <!-- 3. マップ画面に戻るボタンなどを下部に配置 -->
     <Button
