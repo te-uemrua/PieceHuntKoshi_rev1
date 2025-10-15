@@ -11,9 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PieceViewHolder>{
 
-    private List<Piece> pieceList;
+    private List<PuzzleData> pieceList;
     //コンストラクタ
-    public PuzzleAdapter(List<Piece> pieceList){
+    public PuzzleAdapter(List<PuzzleData> pieceList){
         this.pieceList = pieceList;
     }
 
@@ -36,9 +36,9 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PieceViewH
 
     @Override
     public void onBindViewHolder(@NonNull PieceViewHolder holder, int position){
-        Piece currentPiece = pieceList.get(position);
-        if(currentPiece.isAcquired()){
-            holder.pieceImageView.setImageResource(currentPiece.getPieceResourceId());
+        PuzzleData currentPiece = pieceList.get(position);
+        if(currentPiece.isUnlocked()){
+            holder.pieceImageView.setImageResource(currentPiece.getImageResId());
         }else{
             holder.pieceImageView.setImageResource(R.drawable.mask_piece_shape);
         }

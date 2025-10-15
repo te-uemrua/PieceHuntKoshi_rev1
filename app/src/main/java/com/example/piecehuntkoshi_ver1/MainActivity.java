@@ -37,6 +37,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Button getPieceButton;
     private Button collectionButton;
 
+    private Button PuzzleButton;
+
     private FusedLocationProviderClient fusedLocationClient;
     private Handler locationHandler = new Handler(Looper.getMainLooper());
     private Runnable locationCheckRunnable;
@@ -57,11 +59,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         collectionButton = findViewById(R.id.collection_button);
         collectionButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, PuzzleScreenActivity.class);
+            Toast.makeText(MainActivity.this, "この機能は現在準備中です", Toast.LENGTH_SHORT).show();
+        });
+
+        PuzzleButton = findViewById(R.id.puzzle_button);
+        PuzzleButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, PuzzleActivity.class);
             startActivity(intent);
         });
-        // ★★★ ここまで ★★★
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);

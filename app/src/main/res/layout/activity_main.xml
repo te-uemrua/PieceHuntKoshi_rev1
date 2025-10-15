@@ -66,10 +66,22 @@
             android:layout_marginBottom="8dp"
             android:visibility="gone"
             tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/puzzle_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bordered_button_background"
+            android:text="パズルを見る"
+            android:textColor="@color/origin_orange"
+            android:textSize="20sp"
+            android:textStyle="bold" />
         <Button
             android:id="@+id/collection_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:background="@drawable/bordered_button_background"
             android:text="コレクションを見る"
             android:textColor="@color/origin_orange"
