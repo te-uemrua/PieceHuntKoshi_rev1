@@ -31,6 +31,8 @@ android {
     }
 }
 
+val roomVersion = "2.6.1"
+
 dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.gms:play-services-location:21.2.0")
@@ -46,7 +48,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
 
     //room_databaseのやつ
-    val room_version = "2.2.6"
-    implementation("androidx.room:room-runtime:$room_version")
-    annotationProcessor("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-runtime:$roomVersion")
+    annotationProcessor("androidx.room:room-compiler:$roomVersion")
 }
