@@ -31,12 +31,11 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    // 権限リクエストの識別コード (任意の数字でOK)
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private GoogleMap mMap;
     private Button getPieceButton;
-    private Button collectionButton; // ★★★ コンフリクト解消：collectionButtonの変数を追加 ★★★
+    private Button collectionButton;
 
     private FusedLocationProviderClient fusedLocationClient;
     private Handler locationHandler = new Handler(Looper.getMainLooper());
@@ -49,18 +48,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // --- RENTOさんの変更内容 ---
         getPieceButton = findViewById(R.id.get_piece_button);
         getPieceButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, shake_phone.class);
             startActivity(intent);
         });
 
-        // ★★★ コンフリクト解消：もう一人のメンバーの変更内容を取り込む ★★★
+
         collectionButton = findViewById(R.id.collection_button);
         collectionButton.setOnClickListener(v -> {
-            // 注意：遷移先のActivity名が不明なため、仮で `puzzle_screen.class` にしています。
-            // 実際のクラス名（例: PuzzleScreenActivity.class）に修正してください。
             Intent intent = new Intent(MainActivity.this, PuzzleScreenActivity.class);
             startActivity(intent);
         });
