@@ -7,9 +7,7 @@
     android:layout_gravity="center_horizontal"
     android:background="@color/origin_blue">
 
-    <!-- タイトル -->
 
-    <!-- ガラス風説明ボックス -->
 
     <TextView
         android:id="@+id/game_title"
@@ -35,7 +33,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="90dp"
         android:background="@drawable/glass_card"
         android:orientation="vertical"
         android:padding="24dp"
@@ -65,17 +63,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="合志市を歩いて、スマホを振って\n写真のピースを集めよう！\nまちの風景パズルを完成させる、\nおでかけ収集ゲームです。"
+            android:text="合志市を歩いて、\nランドマークに着いたらスマホをシェイク！\n写真のピースが手に入るよ。\n全部集めて、パズルを完成させよう！"
             android:textColor="@color/white"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
     </LinearLayout>
 
-    <!-- スタートボタン -->
+
     <Button
         android:id="@+id/start_button"
         android:layout_width="203dp"
         android:layout_height="73dp"
-        android:layout_marginBottom="100dp"
+        android:layout_marginBottom="80dp"
         android:background="@drawable/custom_start_button"
         android:gravity="center_horizontal"
         android:text="@string/start_button"
@@ -88,7 +86,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintVertical_chainStyle="spread_inside" />
 
-    <!-- 設定アイコン（右上） -->
+
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"

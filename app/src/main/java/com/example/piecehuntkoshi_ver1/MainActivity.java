@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private Runnable locationCheckRunnable;
     private boolean isInLandmarkArea = false;
 
-    // ★★★ ランドマークのデータ構造をHashMapからArrayList<Landmark>に変更 ★★★
+
     private ArrayList<Landmark> landmarkList = new ArrayList<>();
 
     @Override
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 元のボタンの処理はそのまま
+
         getPieceButton = findViewById(R.id.get_piece_button);
         getPieceButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, shake_phone.class);
@@ -65,18 +65,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
         });
 
-        // ★★★ ここから追加 ★★★
-        // リスト表示ボタンの処理
+
         FloatingActionButton listButton = findViewById(R.id.list_button);
         listButton.setOnClickListener(v -> {
-            // ボトムシートを表示
+
             LandmarkListBottomSheet bottomSheet = LandmarkListBottomSheet.newInstance(landmarkList);
             bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
 
-        // ランドマークデータを初期化
+
         initializeLandmarks();
-        // ★★★ ここまで追加 ★★★
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -84,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
-    // ★★★ ランドマークデータを初期化するメソッドを新設 ★★★
+
     private void initializeLandmarks() {
         landmarkList.add(new Landmark("熊本県農業カントリーパーク", new LatLng(32.8900575, 130.7595619), 500f));
         landmarkList.add(new Landmark("竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f));
@@ -148,7 +147,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setupMapDrawings() {
-        // ★★★ landmarkList を使うように処理を変更 ★★★
         for (Landmark landmark : landmarkList) {
             mMap.addMarker(new MarkerOptions().position(landmark.getLocation()).title(landmark.getName()));
             mMap.addCircle(new CircleOptions()
@@ -159,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .fillColor(0x55ff0000));
         }
 
-        // 地図の範囲設定やポリゴンの描画はそのまま
+
         LatLng southWest = new LatLng(32.84, 130.72);
         LatLng northEast = new LatLng(32.93, 130.82);
         LatLngBounds koshiBounds = new LatLngBounds(southWest, northEast);
@@ -212,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (location == null) return;
 
             boolean currentlyInArea = false;
-            // ★★★ landmarkList を使うように変更 & 距離を計算してセット ★★★
+
             for (Landmark landmark : landmarkList) {
                 float[] results = new float[1];
                 Location.distanceBetween(
@@ -221,16 +219,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         results);
                 float distanceInMeters = results[0];
 
-                // 距離をオブジェクトに保存（リスト表示のため）
+
                 landmark.setDistance(distanceInMeters);
 
                 if (distanceInMeters < landmark.getRadius()) {
                     currentlyInArea = true;
-                    // breakしないことで、全てのランドマークとの距離を計算し続ける
+
                 }
             }
 
-            // エリア内外の判定ロジックはそのまま
             if (currentlyInArea && !isInLandmarkArea) {
                 // getPieceButton が null でないことを確認
                 if(getPieceButton != null) getPieceButton.setVisibility(View.VISIBLE);
