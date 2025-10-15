@@ -9,4 +9,6 @@
     <string name="message2">"位置情報の取得が無いままアプリを継続します"</string>
     <string name="button">"位置情報の取得"</string>
     <string name="button2">"アプリ権限の設定"</string>
+    <string name="remaining_pieces_format">あと%1$d枚で完成！</string>
+    <string name="puzzle_complete">パズル完成！</string>
 </resources>
