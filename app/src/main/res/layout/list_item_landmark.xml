@@ -19,7 +19,7 @@
         android:id="@+id/landmark_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ここまでの距離: --- m"
+        android:text="目的地までの距離: --- m"
         android:textSize="14sp"
         android:layout_marginTop="4dp"
         android:textColor="@color/origin_yellow"
