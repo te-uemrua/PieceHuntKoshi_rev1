@@ -12,19 +12,19 @@ import androidx.room.Update;
 public interface PuzzlePieceDao {
 
     @Insert
-    void insert(PuzzlePieceEntity puzzlePieceEntity);
+    void insert(LandmarkPuzzlePiece landmarkPuzzlePiece);
     @Insert
-    void insertAll(PuzzlePieceEntity... puzzlePieceEntities);
+    void insertAll(LandmarkPuzzlePiece... landmarkPuzzlePieces);
 
     @Delete
-    void delete(PuzzlePieceEntity puzzlePieceEntity);
+    void delete(LandmarkPuzzlePiece landmarkPuzzlePiece);
     @Delete
-    void deleteAll(PuzzlePieceEntity... puzzlePieceEntities);
+    void deleteAll(LandmarkPuzzlePiece... landmarkPuzzlePieces);
 
     @Update
-    void updatePuzzlePiece(PuzzlePieceEntity... puzzlePieceEntities);
+    void updatePuzzlePiece(LandmarkPuzzlePiece... landmarkPuzzlePieces);
 
-    @Query("SELECT * FROM puzzlePieceEntity WHERE landmark_name = :landmark")
-    List<PuzzlePieceEntity> findLandmark(String landmark);
+    @Query("SELECT * FROM LandmarkPuzzlePiece WHERE landmark_name = :landmark")
+    List<LandmarkPuzzlePiece> findLandmark(String landmark);
 
 }
