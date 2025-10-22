@@ -7,4 +7,22 @@
     android:layout_height="match_parent"
     tools:context=".PieceGetActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="285dp"
+        android:layout_height="78dp"
+        android:text="Piece Get!"
+        android:textSize="60sp"
+        android:textStyle="bold"
+        tools:layout_editor_absoluteX="63dp"
+        tools:layout_editor_absoluteY="154dp" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="272dp"
+        android:layout_height="58dp"
+        android:text="コレクションを見る"
+        android:textSize="24sp"
+        tools:layout_editor_absoluteX="69dp"
+        tools:layout_editor_absoluteY="632dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
