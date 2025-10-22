@@ -26,50 +26,69 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
-import java.util.HashMap;
-import java.util.Map;
+// ★★★ インポートを追加 ★★★
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import java.util.ArrayList;
+
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
-    // 権限リクエストの識別コード (任意の数字でOK)
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
 
     private GoogleMap mMap;
     private Button getPieceButton;
-    private Button collectionButton; // ★★★ コンフリクト解消：collectionButtonの変数を追加 ★★★
+    private Button collectionButton;
 
     private FusedLocationProviderClient fusedLocationClient;
     private Handler locationHandler = new Handler(Looper.getMainLooper());
     private Runnable locationCheckRunnable;
-    private Map<LatLng, Float> landmarks = new HashMap<>();
     private boolean isInLandmarkArea = false;
+
+
+    private ArrayList<Landmark> landmarkList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // --- RENTOさんの変更内容 ---
+
         getPieceButton = findViewById(R.id.get_piece_button);
         getPieceButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, shake_phone.class);
             startActivity(intent);
         });
 
-        // ★★★ コンフリクト解消：もう一人のメンバーの変更内容を取り込む ★★★
         collectionButton = findViewById(R.id.collection_button);
         collectionButton.setOnClickListener(v -> {
-            // 注意：遷移先のActivity名が不明なため、仮で `puzzle_screen.class` にしています。
-            // 実際のクラス名（例: PuzzleScreenActivity.class）に修正してください。
             Intent intent = new Intent(MainActivity.this, PuzzleScreenActivity.class);
             startActivity(intent);
         });
-        // ★★★ ここまで ★★★
+
+
+        FloatingActionButton listButton = findViewById(R.id.list_button);
+        listButton.setOnClickListener(v -> {
+
+            LandmarkListBottomSheet bottomSheet = LandmarkListBottomSheet.newInstance(landmarkList);
+            bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
+        });
+
+
+        initializeLandmarks();
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+
+    private void initializeLandmarks() {
+        landmarkList.add(new Landmark("熊本県農業カントリーパーク", new LatLng(32.8900575, 130.7595619), 500f));
+        landmarkList.add(new Landmark("竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f));
+        landmarkList.add(new Landmark("アンビー熊本", new LatLng(32.880783, 130.785207), 100f));
+        landmarkList.add(new Landmark("合志義塾跡", new LatLng(32.9163671, 130.7458907), 100f));
     }
 
     @Override
@@ -128,25 +147,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setupMapDrawings() {
-        LatLng countrypark = new LatLng(32.8900575, 130.7595619);
-        LatLng takabajouatopark = new LatLng(32.89896389, 130.79429999);
-        LatLng ambkumamoto = new LatLng(32.880783, 130.785207);
-        LatLng koshigijukuato = new LatLng(32.9163671, 130.7458907);
+        for (Landmark landmark : landmarkList) {
+            mMap.addMarker(new MarkerOptions().position(landmark.getLocation()).title(landmark.getName()));
+            mMap.addCircle(new CircleOptions()
+                    .center(landmark.getLocation())
+                    .radius(landmark.getRadius())
+                    .strokeColor(Color.RED)
+                    .strokeWidth(5f)
+                    .fillColor(0x55ff0000));
+        }
 
-        landmarks.put(countrypark, 500f);
-        landmarks.put(takabajouatopark, 200f);
-        landmarks.put(ambkumamoto, 100f);
-        landmarks.put(koshigijukuato, 100f);
-
-        mMap.addMarker(new MarkerOptions().position(countrypark).title("熊本県農業カントリーパーク"));
-        mMap.addMarker(new MarkerOptions().position(takabajouatopark).title("竹迫城跡公園"));
-        mMap.addMarker(new MarkerOptions().position(ambkumamoto).title("アンビー熊本"));
-        mMap.addMarker(new MarkerOptions().position(koshigijukuato).title("合志義塾跡"));
-
-        mMap.addCircle(new CircleOptions().center(countrypark).radius(500).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
-        mMap.addCircle(new CircleOptions().center(takabajouatopark).radius(200).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
-        mMap.addCircle(new CircleOptions().center(ambkumamoto).radius(100).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
-        mMap.addCircle(new CircleOptions().center(koshigijukuato).radius(100).strokeColor(Color.RED).strokeWidth(5f).fillColor(0x55ff0000));
 
         LatLng southWest = new LatLng(32.84, 130.72);
         LatLng northEast = new LatLng(32.93, 130.82);
@@ -200,26 +210,31 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (location == null) return;
 
             boolean currentlyInArea = false;
-            for (Map.Entry<LatLng, Float> entry : landmarks.entrySet()) {
-                LatLng landmarkLocation = entry.getKey();
-                float radius = entry.getValue();
 
+            for (Landmark landmark : landmarkList) {
                 float[] results = new float[1];
-                Location.distanceBetween(location.getLatitude(), location.getLongitude(), landmarkLocation.latitude, landmarkLocation.longitude, results);
+                Location.distanceBetween(
+                        location.getLatitude(), location.getLongitude(),
+                        landmark.getLocation().latitude, landmark.getLocation().longitude,
+                        results);
                 float distanceInMeters = results[0];
 
-                if (distanceInMeters < radius) {
+
+                landmark.setDistance(distanceInMeters);
+
+                if (distanceInMeters < landmark.getRadius()) {
                     currentlyInArea = true;
-                    break;
+
                 }
             }
 
             if (currentlyInArea && !isInLandmarkArea) {
-                getPieceButton.setVisibility(View.VISIBLE);
+                // getPieceButton が null でないことを確認
+                if(getPieceButton != null) getPieceButton.setVisibility(View.VISIBLE);
                 Toast.makeText(MainActivity.this, "ランドマークエリアに入りました！", Toast.LENGTH_SHORT).show();
                 isInLandmarkArea = true;
             } else if (!currentlyInArea && isInLandmarkArea) {
-                getPieceButton.setVisibility(View.GONE);
+                if(getPieceButton != null) getPieceButton.setVisibility(View.GONE);
                 Toast.makeText(MainActivity.this, "ランドマークエリアから出ました。", Toast.LENGTH_SHORT).show();
                 isInLandmarkArea = false;
             }
