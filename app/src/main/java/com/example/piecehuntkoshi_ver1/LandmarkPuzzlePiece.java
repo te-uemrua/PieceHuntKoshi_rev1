@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class PuzzlePieceEntity {
+public class LandmarkPuzzlePiece {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
