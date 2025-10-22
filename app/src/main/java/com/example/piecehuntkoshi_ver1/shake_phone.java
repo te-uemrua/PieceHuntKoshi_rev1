@@ -67,9 +67,9 @@ public class shake_phone extends Activity implements SensorEventListener {
             if (now - lastShakeTime > 500) {
                 lastShakeTime = now;
 
-                // 🔽 ピース獲得画面へ遷移（あとでどうにかする）
-                // Intent intent = new Intent(this, PieceGetActivity.class);
-                // startActivity(intent);
+                // 🔽 ピース獲得画面へ遷移
+                Intent intent = new Intent(this, PieceGetActivity.class);
+                startActivity(intent);
             }
         }
     }
