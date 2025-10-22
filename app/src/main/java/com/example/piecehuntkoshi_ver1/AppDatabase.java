@@ -4,6 +4,6 @@ import androidx.room.Database;
 import androidx.room.RoomDatabase;
 
 @Database(entities = {LandmarkPuzzlePiece.class}, version = 1)
-public abstract class PuzzlePieceDatabase extends RoomDatabase{
+public abstract class AppDatabase extends RoomDatabase{
     public abstract PuzzlePieceDao puzzlePieceDao();
 }
