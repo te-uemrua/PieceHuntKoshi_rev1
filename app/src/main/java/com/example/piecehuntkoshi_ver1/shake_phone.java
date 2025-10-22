@@ -63,8 +63,8 @@ public class shake_phone extends Activity implements SensorEventListener {
         if (acceleration > SHAKE_THRESHOLD) {
             long now = System.currentTimeMillis();
 
-            // 1秒以上感覚が空いていればシェイク処理を実行
-            if (now - lastShakeTime > 1000) {
+            // 0.5秒以上感覚が空いていればシェイク処理を実行
+            if (now - lastShakeTime > 500) {
                 lastShakeTime = now;
 
                 // 🔽 ピース獲得画面へ遷移（あとでどうにかする）
