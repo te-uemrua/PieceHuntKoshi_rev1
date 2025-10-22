@@ -5,7 +5,7 @@ import androidx.room.ColumnInfo;
 import androidx.room.PrimaryKey;
 
 @Entity
-public class PuzzlePieceEntity {
+public class LandmarkPuzzlePiece {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
@@ -14,6 +14,9 @@ public class PuzzlePieceEntity {
 
     @ColumnInfo(name = "date")
     private String date;
+
+    @ColumnInfo(name = "puzzlePiece_number")
+    private int puzzlePieceNumber;
 
     public int getId() {
         return id;
@@ -37,5 +40,13 @@ public class PuzzlePieceEntity {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public int getPuzzlePieceNumber(){
+        return puzzlePieceNumber;
+    }
+
+    public void setPuzzlePieceNumber(int puzzlePieceNumber){
+        this.puzzlePieceNumber = puzzlePieceNumber;
     }
 }
