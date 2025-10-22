@@ -31,7 +31,7 @@ public class LandmarkAdapter extends RecyclerView.Adapter<LandmarkAdapter.Landma
 
         // 距離が計算されていれば表示
         if (landmark.getDistance() >= 0) {
-            holder.distanceTextView.setText(String.format(Locale.JAPAN, "ここまでの距離: %.0f m", landmark.getDistance()));
+            holder.distanceTextView.setText(String.format(Locale.JAPAN, "目的地までの距離: %.0f m", landmark.getDistance()));
         } else {
             holder.distanceTextView.setText("ここまでの距離: 計測中...");
         }

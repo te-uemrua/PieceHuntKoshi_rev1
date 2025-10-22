@@ -77,7 +77,7 @@
         android:background="@drawable/custom_start_button"
         android:gravity="center_horizontal"
         android:text="@string/start_button"
-        android:textColor="@color/origin_orange"
+        android:textColor="@color/origin_blue"
         android:textSize="30sp"
         android:textStyle="bold"
         app:backgroundTint="@null"
