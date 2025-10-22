@@ -85,10 +85,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
     private void initializeLandmarks() {
+        landmarkList.add(new Landmark("アンビー熊本", new LatLng(32.880783,130.785207),200f));
+        landmarkList.add(new Landmark("クラッシーノマルシェ", new LatLng(32.891637,130.732765),200f));
         landmarkList.add(new Landmark("熊本県農業カントリーパーク", new LatLng(32.8900575, 130.7595619), 500f));
+        landmarkList.add(new Landmark("元気の森公園", new LatLng(32.866013,130.76833), 400f));
+        landmarkList.add(new Landmark("合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f));
+        landmarkList.add(new Landmark("合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f));
+        landmarkList.add(new Landmark("スプリングガーデン御代志", new LatLng(32.880799,130.748208), 300f));
         landmarkList.add(new Landmark("竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f));
-        landmarkList.add(new Landmark("アンビー熊本", new LatLng(32.880783, 130.785207), 100f));
-        landmarkList.add(new Landmark("合志義塾跡", new LatLng(32.9163671, 130.7458907), 100f));
+        landmarkList.add(new Landmark("妙泉寺公園", new LatLng(32.858651,130.732413), 100f));
+        landmarkList.add(new Landmark("ゆめモール合志", new LatLng(32.902321,130.762525), 100f));
+
+
+
+
+
+
     }
 
     @Override
