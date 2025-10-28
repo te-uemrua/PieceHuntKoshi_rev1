@@ -34,15 +34,33 @@ public class PuzzleAdapter extends RecyclerView.Adapter<PuzzleAdapter.PieceViewH
         return new PieceViewHolder(view);
     }
 
+// PuzzleAdapter.java の onBindViewHolder メソッド
+
     @Override
-    public void onBindViewHolder(@NonNull PieceViewHolder holder, int position){
+    public void onBindViewHolder(@NonNull PieceViewHolder holder, int position) {
         PuzzleData currentPiece = pieceList.get(position);
-        if(currentPiece.isUnlocked()){
-            holder.pieceImageView.setImageResource(currentPiece.getImageResId());
-        }else{
-            holder.pieceImageView.setImageResource(R.drawable.mask_piece_shape);
+        ImageView pieceImageView = holder.pieceImageView;
+
+        // まず、どんな場合でも共通のピース画像（枠）を設定する
+        // これにより、SquareImageViewは常に正方形を維持しようと働く
+        pieceImageView.setImageResource(currentPiece.getImageResId());
+
+        if (currentPiece.isUnlocked()) {
+            // ★ 取得済みの場合
+            // 前景のピース画像はそのまま活かし、背景は透明にする
+            pieceImageView.setBackground(null);
+            // 画像のアルファ値（不透明度）を100%（不透明）にする
+            pieceImageView.setImageAlpha(255);
+
+        } else {
+            // ★ 未取得の場合
+            // 前景のピース画像を半透明（ほとんど見えない状態）にする
+            pieceImageView.setImageAlpha(30); // 0だと完全に消えてしまうことがあるため、少しだけ見えるようにする
+            // 背景に「？」アイコンを設定する
+            pieceImageView.setBackgroundResource(android.R.drawable.ic_menu_help);
         }
     }
+
 
     @Override
     public int getItemCount(){

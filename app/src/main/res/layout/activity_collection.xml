@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:context=".CollectionActivity">
+
+    <!-- ヘッダー部分はそのまま -->
+    <LinearLayout
+        android:id="@+id/header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/origin_blue"
+        android:orientation="vertical"
+        android:padding="30dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="コレクション"
+            android:textColor="@color/origin_orange"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/collected_pieces_count_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/origin_yellow"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            tools:text="3 / 9 収集中" />
+    </LinearLayout>
+
+    <!-- RecyclerViewを元に戻す -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/collectionRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp" />
+
+    <!-- 戻るボタンはそのまま -->
+    <Button
+        android:id="@+id/back_to_map_from_collection_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bordered_button_background"
+        android:text="マップに戻る"
+        android:textColor="@color/origin_orange"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PieceHuntKoshi_ver1">
         <activity
+            android:name=".CollectionActivity"
+            android:exported="false" />
+        <activity
             android:name=".PuzzleActivity"
             android:exported="false" />
         <activity

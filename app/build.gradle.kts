@@ -32,20 +32,25 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.google.android.gms:play-services-location:21.2.0")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation("com.google.android.gms:play-services-location:21.2.0")
     implementation(libs.appcompat)
-    implementation(libs.material)
+    implementation(libs.material) // ← Materialライブラリを信頼する
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // RecyclerViewとCardView
     implementation(libs.recyclerview)
+    // implementation("androidx.cardview:cardview:1.0.0") // ← 古い指定方法は削除
+
+    // Roomデータベース
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
+
+    // Googleマップと位置情報サービス
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
+
+    // テストライブラリ
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-
 }

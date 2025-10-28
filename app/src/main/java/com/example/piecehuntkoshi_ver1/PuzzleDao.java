@@ -2,33 +2,41 @@ package com.example.piecehuntkoshi_ver1;
 
 import androidx.room.Dao;
 import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Update;
-
 import java.util.List;
 
-@Dao // このインターフェースがDAOであることを示す
+@Dao
 public interface PuzzleDao {
 
-    // "puzzle_pieces"テーブルから全てのデータを取得する命令
-    @Query("SELECT * FROM puzzle_pieces")
-    List<PuzzleData> getAllPieces();
+    // --- Puzzle methods ---
 
-    // データをテーブルに挿入する命令
-    // 同じIDのデータが既にあれば、新しいデータで上書きする(REPLACE)
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<PuzzleData> pieces);
+    @Insert
+    void insertPuzzle(Puzzle puzzle);
 
-    // データを更新する命令
-    @Update
-    void updatePiece(PuzzleData piece);
+    // Get ALL puzzles, not just completed ones
+    @Query("SELECT * FROM puzzles")
+    List<Puzzle> getAllPuzzles();
 
-    // テーブルの全データを削除する命令（デバッグ用など）
-    @Query("DELETE FROM puzzle_pieces")
-    void deleteAllPieces();
+    @Query("SELECT COUNT(*) FROM puzzles")
+    int getPuzzleCount();
 
-    // テーブルにデータがいくつあるか数える命令
+    @Query("UPDATE puzzles SET is_completed = 1 WHERE id = :puzzleId")
+    void updatePuzzleAsCompleted(int puzzleId);
+
+    // --- PuzzleData (Piece) methods ---
+
+    @Insert
+    void insertAllPieces(List<PuzzleData> pieces);
+
+    @Query("SELECT * FROM puzzle_pieces WHERE puzzle_id = :puzzleId")
+    List<PuzzleData> getPiecesForPuzzle(int puzzleId);
+
     @Query("SELECT COUNT(*) FROM puzzle_pieces")
     int getPieceCount();
+
+    @Query("UPDATE puzzle_pieces SET is_unlocked = 1 WHERE id = :pieceId")
+    void unlockPieceById(int pieceId);
+
+    @Query("SELECT puzzle_id FROM puzzle_pieces WHERE id = :pieceId LIMIT 1")
+    int getPuzzleIdForPiece(int pieceId);
 }

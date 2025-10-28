@@ -2,47 +2,62 @@ package com.example.piecehuntkoshi_ver1;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
+import androidx.room.ForeignKey;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
-// @Entityアノテーションで、このクラスが"puzzle_pieces"という名前のテーブルであることを示す
-@Entity(tableName = "puzzle_pieces")
+@Entity(tableName = "puzzle_pieces",
+        foreignKeys = @ForeignKey(entity = Puzzle.class,
+                                  parentColumns = "id",
+                                  childColumns = "puzzle_id",
+                                  onDelete = ForeignKey.CASCADE),
+        indices = {@Index(value = {"puzzle_id"})})
 public class PuzzleData {
 
-    // @PrimaryKeyで、この'id'がテーブルの主キー（各行を一位に識別するID）であることを示す
-    @PrimaryKey
-    @ColumnInfo(name = "id") // テーブルのカラム（列）名を指定
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     private int id;
 
-    @ColumnInfo(name = "image_res_id") // テーブルのカラム名を指定
+    @ColumnInfo(name = "puzzle_id") // Which puzzle this piece belongs to
+    private int puzzleId;
+
+    @ColumnInfo(name = "image_res_id")
     private int imageResId;
 
-    @ColumnInfo(name = "is_unlocked") // テーブルのカラム名を指定
+    @ColumnInfo(name = "is_unlocked")
     private boolean isUnlocked;
 
-    // コンストラクタ（データを生成する部分）
-    public PuzzleData(int id, int imageResId, boolean isUnlocked) {
-        this.id = id;
+    // Constructor
+    public PuzzleData(int puzzleId, int imageResId, boolean isUnlocked) {
+        this.puzzleId = puzzleId;
         this.imageResId = imageResId;
         this.isUnlocked = isUnlocked;
     }
 
-    // --- ゲッター（データを取り出すためのメソッド） ---
+    // Getters
     public int getId() {
         return id;
+    }
+
+    public int getPuzzleId() {
+        return puzzleId;
     }
 
     public int getImageResId() {
         return imageResId;
     }
 
-    // isAcquired() から isUnlocked() に名前を合わせます
     public boolean isUnlocked() {
         return isUnlocked;
     }
 
-    // --- セッター（データを後から変更するためのメソッド） ---
+    // Setters
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setPuzzleId(int puzzleId) {
+        this.puzzleId = puzzleId;
     }
 
     public void setImageResId(int imageResId) {
@@ -53,4 +68,3 @@ public class PuzzleData {
         isUnlocked = unlocked;
     }
 }
-

@@ -36,8 +36,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private Button getPieceButton;
     private Button collectionButton;
-
-    private Button PuzzleButton;
+    private Button viewPuzzleButton;
 
     private FusedLocationProviderClient fusedLocationClient;
     private Handler locationHandler = new Handler(Looper.getMainLooper());
@@ -56,17 +55,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
         });
 
-
         collectionButton = findViewById(R.id.collection_button);
         collectionButton.setOnClickListener(v -> {
-            Toast.makeText(MainActivity.this, "この機能は現在準備中です", Toast.LENGTH_SHORT).show();
-        });
-
-        PuzzleButton = findViewById(R.id.puzzle_button);
-        PuzzleButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, PuzzleActivity.class);
+            Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
             startActivity(intent);
         });
+
+        viewPuzzleButton = findViewById(R.id.view_puzzle_button);
+        viewPuzzleButton.setOnClickListener(v -> {
+            // Pass a default puzzle ID (e.g., 1 for the first puzzle)
+            Intent intent = new Intent(MainActivity.this, PuzzleActivity.class);
+            intent.putExtra("PUZZLE_ID", 1); // ★★★ Add this line ★★★
+            startActivity(intent);
+        });
+        
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
