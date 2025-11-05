@@ -44,7 +44,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 // The pieces will be created by PuzzleActivity when a puzzle is opened for the first time.
 
                 // Puzzle 1 (Completed)
-                dao.insertPuzzle(new Puzzle("熊本県農業公園", R.drawable.ic_launcher_background, true));
+                dao.insertPuzzle(new Puzzle("ヴイーブルくん", R.drawable.ic_launcher_background, true));
 
                 // Puzzle 2 (Not Completed)
                 dao.insertPuzzle(new Puzzle("No.2", R.drawable.ic_launcher_foreground, false));
