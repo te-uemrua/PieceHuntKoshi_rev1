@@ -1,136 +1,51 @@
-package com.example.piecehuntkoshi_ver1;
+private void acquirePiece() {
+    pieceAcquired = true;
 
-import android.content.Context;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
-import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
-import android.widget.TextView;
-import android.widget.Toast;
+    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
 
-import androidx.appcompat.app.AppCompatActivity;
+    databaseExecutor.execute(() -> {
+        // ランダムなピース番号（0〜8）を生成
+        int randomPiece = new java.util.Random().nextInt(9);
 
-import java.util.List; // Import List
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+        // DBでピースをアンロック
+        db.puzzleDao().unlockPieceById(randomPiece);
 
-public class shake_phone extends AppCompatActivity implements SensorEventListener {
+        // パズル完成チェック
+        checkPuzzleCompletion(randomPiece);
 
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
-    private float lastX, lastY, lastZ;
-    private long lastUpdate = 0;
-    private static final int SHAKE_THRESHOLD = 800;
+        // UIスレッドで画面遷移・メッセージ表示
+        runOnUiThread(() -> {
+            instructionText.setText("ピースをゲット！");
+            Toast.makeText(shake_phone.this, "ピース No." + (randomPiece + 1) + " を手に入れた！", Toast.LENGTH_LONG).show();
 
-    private AppDatabase db;
-    private ExecutorService databaseExecutor = Executors.newSingleThreadExecutor();
+            // PieceGetActivity に遷移して番号を渡す
+            Intent intent = new Intent(shake_phone.this, PieceGetActivity.class);
+            intent.putExtra("pieceNumber", randomPiece);
+            startActivity(intent);
 
-    private boolean pieceAcquired = false;
-
-    private TextView instructionText;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_shake_phone); 
-
-        instructionText = findViewById(R.id.instruction_text);
-
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-        db = AppDatabase.getDatabase(getApplicationContext());
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (!pieceAcquired) {
-            long curTime = System.currentTimeMillis();
-            if ((curTime - lastUpdate) > 100) {
-                long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
-
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
-
-                float speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
-
-                if (speed > SHAKE_THRESHOLD) {
-                    acquirePiece();
-                }
-
-                lastX = x;
-                lastY = y;
-                lastZ = z;
-            }
-        }
-    }
-
-    private void acquirePiece() {
-        pieceAcquired = true;
-
-        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-
-        databaseExecutor.execute(() -> {
-            int pieceIdToUnlock = 3; 
-
-            db.puzzleDao().unlockPieceById(pieceIdToUnlock);
-
-            // Check if the puzzle is completed
-            checkPuzzleCompletion(pieceIdToUnlock);
-
-            runOnUiThread(() -> {
-                instructionText.setText("ピースをゲット！");
-                Toast.makeText(shake_phone.this, "パズルのピースNo.4 を手に入れた！", Toast.LENGTH_LONG).show();
-
-                new android.os.Handler().postDelayed(
-                        this::finish,
-                        2000);
-            });
+            // 少し待って終了
+            new android.os.Handler().postDelayed(this::finish, 2000);
         });
-    }
+    });
+}
 
-    // New method to check for puzzle completion
-    private void checkPuzzleCompletion(int unlockedPieceId) {
-        // This still runs on the background thread
-        int puzzleId = db.puzzleDao().getPuzzleIdForPiece(unlockedPieceId);
-        if (puzzleId > 0) { // If a valid puzzle was found
-            List<PuzzleData> allPiecesForPuzzle = db.puzzleDao().getPiecesForPuzzle(puzzleId);
-            
-            boolean allUnlocked = true;
-            for (PuzzleData piece : allPiecesForPuzzle) {
-                if (!piece.isUnlocked()) {
-                    allUnlocked = false;
-                    break;
-                }
-            }
+// パズル完成チェック
+private void checkPuzzleCompletion(int unlockedPieceId) {
+    int puzzleId = db.puzzleDao().getPuzzleIdForPiece(unlockedPieceId);
+    if (puzzleId > 0) {
+        List<PuzzleData> allPiecesForPuzzle = db.puzzleDao().getPiecesForPuzzle(puzzleId);
 
-            if (allUnlocked) {
-                db.puzzleDao().updatePuzzleAsCompleted(puzzleId);
+        boolean allUnlocked = true;
+        for (PuzzleData piece : allPiecesForPuzzle) {
+            if (!piece.isUnlocked()) {
+                allUnlocked = false;
+                break;
             }
         }
-    }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // Do nothing
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        if (allUnlocked) {
+            db.puzzleDao().updatePuzzleAsCompleted(puzzleId);
+        }
     }
 }
