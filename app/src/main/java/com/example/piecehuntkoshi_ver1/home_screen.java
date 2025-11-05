@@ -16,17 +16,18 @@ import android.widget.Toast;
 
 public class home_screen extends AppCompatActivity {
     private boolean requestingLocationUpdates = false;
+    private boolean locationAuthority = false;
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             isGranted -> {
-                //⑦ ユーザーが権限を許可したか
+                //ユーザーが権限を許可したか
                 if (isGranted) {
-                    //⑧a 制限された機能にアクセスする
+                    //制限された機能にアクセスする
                     requestingLocationUpdates = true;
                 } else {
-                    //⑧b 制限された機能が無いままで継続
+                    //制限された機能が無いままで継続
                     toastMake(R.string.message2);
                 }
             });
@@ -36,20 +37,20 @@ public class home_screen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
 
-            //④ 権限が既に付与されているか
+            //権限が既に付与されているか
             if (ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
 
-                //⑧a 制限された機能にアクセスする
+                //制限された機能にアクセスする
                 requestingLocationUpdates = true;
             }
-            //⑤a 権限の根拠を示す必要があるか
+            //権限の根拠を示す必要があるか
             else if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                //⑤b 権限が必要な理由・メリットを説明
+                //権限が必要な理由・メリットを説明
                 builder.setMessage(R.string.alert_dialog)
                         .setPositiveButton(R.string.ok, (dialog, id) ->
                                 requestPermissionLauncher.launch(
@@ -60,14 +61,14 @@ public class home_screen extends AppCompatActivity {
                 builder.show();
 
             } else {
-                //⑥ システム権限を要求する
+                //システム権限を要求する
                 requestPermissionLauncher.launch(
                         Manifest.permission.ACCESS_FINE_LOCATION);
             }
 
         Button button2 = findViewById(R.id.button2);
         button2.setOnClickListener(v -> {
-            // アプリのSetting画面を開く
+            //アプリのSetting画面を開く
             String uriString = "package:" + getPackageName();
             Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
                     Uri.parse(uriString));
@@ -79,6 +80,14 @@ public class home_screen extends AppCompatActivity {
             Intent intent = new Intent(home_screen.this,MainActivity.class);
             startActivity(intent);
         });
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_DENIED) {
+            start_button.setEnabled(false);
+            start_button.setAlpha(.5f);
+        }
+
 
     }
 
