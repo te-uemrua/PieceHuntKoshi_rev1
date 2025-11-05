@@ -2,6 +2,7 @@ package com.example.piecehuntkoshi_ver1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences; // ★★★ SharedPreferences をインポート ★★★
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -32,12 +33,23 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
     private boolean pieceAcquired = false;
     private TextView instructionText;
 
+    // ★★★ 取得対象のIDと名前を保持 ★★★
+    private String landmarkId;
+    private String landmarkName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.shake_phone);
 
         instructionText = findViewById(R.id.instruction_text);
+        instructionText.setTextSize(23);
+        // ★★★ MainActivityからIDと名前を受け取る ★★★
+        landmarkId = getIntent().getStringExtra("LANDMARK_ID");
+        landmarkName = getIntent().getStringExtra("LANDMARK_NAME");
+        if (landmarkName != null) {
+            instructionText.setText(landmarkName + "\n到着!! " + "\nスマホを振ろう!!");
+        }
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -72,6 +84,13 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
     }
 
     private void acquirePiece() {
+        // ★★★ IDがなければ何もせず終了 ★★★
+        if (landmarkId == null || landmarkId.isEmpty()) {
+            Toast.makeText(this, "エラー: 取得対象のランドマークIDがありません", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         pieceAcquired = true;
 
         // バイブレーション
@@ -85,6 +104,13 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
 
                 // DB更新
                 db.puzzleDao().unlockPieceById(randomPiece);
+
+                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+                // ★★★ SharedPreferences に取得時刻を保存 ★★★
+                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+                SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
+                prefs.edit().putLong(landmarkId + MainActivity.LAST_ACQUIRED_PREFIX, System.currentTimeMillis()).apply();
+                // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
                 // パズル完成チェック
                 checkPuzzleCompletion(randomPiece);
