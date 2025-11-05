@@ -1,83 +1,136 @@
 package com.example.piecehuntkoshi_ver1;
 
-import android.app.Activity;
-import android.os.Bundle;
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.widget.TextView;
+import android.widget.Toast;
 
-// 加速度センサーを使ってシェイク検知
-public class shake_phone extends Activity implements SensorEventListener {
-    // センサー管理用の変数
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List; // Import List
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+public class shake_phone extends AppCompatActivity implements SensorEventListener {
+
     private SensorManager sensorManager;
     private Sensor accelerometer;
+    private float lastX, lastY, lastZ;
+    private long lastUpdate = 0;
+    private static final int SHAKE_THRESHOLD = 800;
 
-    // シェイク判定の閾値
-    private static final float SHAKE_THRESHOLD = 15.0f;
+    private AppDatabase db;
+    private ExecutorService databaseExecutor = Executors.newSingleThreadExecutor();
 
-    // 連続検知を防ぐタイマー
-    private long lastShakeTime = 0;
+    private boolean pieceAcquired = false;
 
-    // Activityが生成されたときに呼ばれる
+    private TextView instructionText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);    // 親クラスの初期化
-        setContentView(R.layout.shake_phone);    // 振ってください画面の表示
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_shake_phone); 
 
-        // SensorManagerの取得
+        instructionText = findViewById(R.id.instruction_text);
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-
-        // 加速度センサーの取得
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+
+        db = AppDatabase.getDatabase(getApplicationContext());
     }
 
-    // 画面が表示されたときにセンサーリスナー登録
     @Override
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
+    public void onSensorChanged(SensorEvent event) {
+        if (!pieceAcquired) {
+            long curTime = System.currentTimeMillis();
+            if ((curTime - lastUpdate) > 100) {
+                long diffTime = (curTime - lastUpdate);
+                lastUpdate = curTime;
+
+                float x = event.values[0];
+                float y = event.values[1];
+                float z = event.values[2];
+
+                float speed = Math.abs(x + y + z - lastX - lastY - lastZ) / diffTime * 10000;
+
+                if (speed > SHAKE_THRESHOLD) {
+                    acquirePiece();
+                }
+
+                lastX = x;
+                lastY = y;
+                lastZ = z;
+            }
+        }
     }
 
-    // 画面が非表示になったときにセンサーリスナー解除（バッテリー節約）
+    private void acquirePiece() {
+        pieceAcquired = true;
+
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+
+        databaseExecutor.execute(() -> {
+            int pieceIdToUnlock = 3; 
+
+            db.puzzleDao().unlockPieceById(pieceIdToUnlock);
+
+            // Check if the puzzle is completed
+            checkPuzzleCompletion(pieceIdToUnlock);
+
+            runOnUiThread(() -> {
+                instructionText.setText("ピースをゲット！");
+                Toast.makeText(shake_phone.this, "パズルのピースNo.4 を手に入れた！", Toast.LENGTH_LONG).show();
+
+                new android.os.Handler().postDelayed(
+                        this::finish,
+                        2000);
+            });
+        });
+    }
+
+    // New method to check for puzzle completion
+    private void checkPuzzleCompletion(int unlockedPieceId) {
+        // This still runs on the background thread
+        int puzzleId = db.puzzleDao().getPuzzleIdForPiece(unlockedPieceId);
+        if (puzzleId > 0) { // If a valid puzzle was found
+            List<PuzzleData> allPiecesForPuzzle = db.puzzleDao().getPiecesForPuzzle(puzzleId);
+            
+            boolean allUnlocked = true;
+            for (PuzzleData piece : allPiecesForPuzzle) {
+                if (!piece.isUnlocked()) {
+                    allUnlocked = false;
+                    break;
+                }
+            }
+
+            if (allUnlocked) {
+                db.puzzleDao().updatePuzzleAsCompleted(puzzleId);
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // Do nothing
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
     }
 
-    // センサーの値が変化したときに呼ばれる
     @Override
-    public void onSensorChanged(SensorEvent event) {
-        // x, y, z軸の加速度を取得
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
-
-        // 合成加速度を計算
-        float acceleration = (float) Math.sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH;
-
-        // 閾値を超えたら振ったと判定
-        if (acceleration > SHAKE_THRESHOLD) {
-            long now = System.currentTimeMillis();
-
-            // 1秒以上感覚が空いていればシェイク処理を実行
-            if (now - lastShakeTime > 1000) {
-                lastShakeTime = now;
-
-                // 🔽 ピース獲得画面へ遷移（あとでどうにかする）
-                // Intent intent = new Intent(this, PieceGetActivity.class);
-                // startActivity(intent);
-            }
-        }
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
-
-    // センサーの精度が変化したときに呼ばれる（今回は使わないけど書かないとエラーになる）
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // 今回は未使用
-    }
-
 }
