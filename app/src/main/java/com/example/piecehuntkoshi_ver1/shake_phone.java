@@ -1,87 +1,51 @@
-package com.example.piecehuntkoshi_ver1;
+private void acquirePiece() {
+    pieceAcquired = true;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.content.Context;
-import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
+    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+    v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
 
-// 加速度センサーを使ってシェイク検知
-public class shake_phone extends Activity implements SensorEventListener {
-    // センサー管理用の変数
-    private SensorManager sensorManager;
-    private Sensor accelerometer;
+    databaseExecutor.execute(() -> {
+        // ランダムなピース番号（0〜8）を生成
+        int randomPiece = new java.util.Random().nextInt(9);
 
-    // シェイク判定の閾値
-    private static final float SHAKE_THRESHOLD = 15.0f;
+        // DBでピースをアンロック
+        db.puzzleDao().unlockPieceById(randomPiece);
 
-    // 連続検知を防ぐタイマー
-    private long lastShakeTime = 0;
+        // パズル完成チェック
+        checkPuzzleCompletion(randomPiece);
 
-    // Activityが生成されたときに呼ばれる
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);    // 親クラスの初期化
-        setContentView(R.layout.shake_phone);    // 振ってください画面の表示
+        // UIスレッドで画面遷移・メッセージ表示
+        runOnUiThread(() -> {
+            instructionText.setText("ピースをゲット！");
+            Toast.makeText(shake_phone.this, "ピース No." + (randomPiece + 1) + " を手に入れた！", Toast.LENGTH_LONG).show();
 
-        // SensorManagerの取得
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            // PieceGetActivity に遷移して番号を渡す
+            Intent intent = new Intent(shake_phone.this, PieceGetActivity.class);
+            intent.putExtra("pieceNumber", randomPiece);
+            startActivity(intent);
 
-        // 加速度センサーの取得
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-    }
+            // 少し待って終了
+            new android.os.Handler().postDelayed(this::finish, 2000);
+        });
+    });
+}
 
-    // 画面が表示されたときにセンサーリスナー登録
-    @Override
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_UI);
-    }
+// パズル完成チェック
+private void checkPuzzleCompletion(int unlockedPieceId) {
+    int puzzleId = db.puzzleDao().getPuzzleIdForPiece(unlockedPieceId);
+    if (puzzleId > 0) {
+        List<PuzzleData> allPiecesForPuzzle = db.puzzleDao().getPiecesForPuzzle(puzzleId);
 
-    // 画面が非表示になったときにセンサーリスナー解除（バッテリー節約）
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
-    }
-
-    // センサーの値が変化したときに呼ばれる
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        // x, y, z軸の加速度を取得
-        float x = event.values[0];
-        float y = event.values[1];
-        float z = event.values[2];
-
-        // 合成加速度を計算
-        float acceleration = (float) Math.sqrt(x * x + y * y + z * z) - SensorManager.GRAVITY_EARTH;
-
-        // 閾値を超えたら振ったと判定
-        if (acceleration > SHAKE_THRESHOLD) {
-            long now = System.currentTimeMillis();
-
-            // 0.5秒以上感覚が空いていればシェイク処理を実行
-            if (now - lastShakeTime > 500) {
-                lastShakeTime = now;
-
-                // ランダムなピース番号を生成（0〜8）
-                int randomPiece = new java.util.Random().nextInt(9);
-
-                // 🔽 ピース獲得画面へ遷移し、番号を渡す
-                Intent intent = new Intent(this, PieceGetActivity.class);
-                intent.putExtra("pieceNumber", randomPiece); // ← 追加
-                startActivity(intent);
+        boolean allUnlocked = true;
+        for (PuzzleData piece : allPiecesForPuzzle) {
+            if (!piece.isUnlocked()) {
+                allUnlocked = false;
+                break;
             }
         }
-    }
 
-    // センサーの精度が変化したときに呼ばれる（今回は使わないけど書かないとエラーになる）
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // 今回は未使用
+        if (allUnlocked) {
+            db.puzzleDao().updatePuzzleAsCompleted(puzzleId);
+        }
     }
-
 }

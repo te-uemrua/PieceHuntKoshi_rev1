@@ -7,16 +7,22 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
+import android.os.Looper; // ★★★ Looper をインポート ★★★
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+// ★★★ 以下の3つをインポート ★★★
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,7 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
-// ★★★ インポートを追加 ★★★
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 
@@ -38,21 +44,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap mMap;
     private Button getPieceButton;
     private Button collectionButton;
+    private Button viewPuzzleButton;
 
     private FusedLocationProviderClient fusedLocationClient;
-    private Handler locationHandler = new Handler(Looper.getMainLooper());
-    private Runnable locationCheckRunnable;
+
+    // ★★★ Handler と Runnable は不要になるので削除 ★★★
+    // private Handler locationHandler = new Handler(Looper.getMainLooper());
+    // private Runnable locationCheckRunnable;
+
     private boolean isInLandmarkArea = false;
-
-
     private ArrayList<Landmark> landmarkList = new ArrayList<>();
+    private AnimationDrawable rainbowAnimation;
+
+    private LocationCallback locationCallback; // ★★★ 位置情報を受け取るコールバックを追加 ★★★
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        // --- ボタンのリスナー ---
         getPieceButton = findViewById(R.id.get_piece_button);
         getPieceButton.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, shake_phone.class);
@@ -61,28 +72,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         collectionButton = findViewById(R.id.collection_button);
         collectionButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, PuzzleScreenActivity.class);
+            Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
             startActivity(intent);
         });
 
+        viewPuzzleButton = findViewById(R.id.view_puzzle_button);
+        viewPuzzleButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, PuzzleActivity.class);
+            intent.putExtra("PUZZLE_ID", 1);
+            startActivity(intent);
+        });
 
         FloatingActionButton listButton = findViewById(R.id.list_button);
         listButton.setOnClickListener(v -> {
-
             LandmarkListBottomSheet bottomSheet = LandmarkListBottomSheet.newInstance(landmarkList);
             bottomSheet.show(getSupportFragmentManager(), bottomSheet.getTag());
         });
 
-
         initializeLandmarks();
 
-
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // ★★★ 位置情報が更新されるたびに呼ばれる処理を定義 ★★★
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                // 最新の位置情報を取得
+                Location lastLocation = locationResult.getLastLocation();
+                if (lastLocation != null) {
+                    // ★★★ 新しい位置情報で距離をチェック ★★★
+                    checkDistanceToLandmarks(lastLocation);
+                }
+            }
+        };
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
-
 
     private void initializeLandmarks() {
         landmarkList.add(new Landmark("アンビー熊本", new LatLng(32.880783,130.785207),200f));
@@ -91,27 +117,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         landmarkList.add(new Landmark("元気の森公園", new LatLng(32.866013,130.76833), 400f));
         landmarkList.add(new Landmark("合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f));
         landmarkList.add(new Landmark("合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f));
-        landmarkList.add(new Landmark("スプリングガーデン御代志", new LatLng(32.880799,130.748208), 300f));
+        landmarkList.add(new Landmark("スプリングガーデン御代志", new LatLng(32.880799,130.748208), 500f));
         landmarkList.add(new Landmark("竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f));
         landmarkList.add(new Landmark("妙泉寺公園", new LatLng(32.858651,130.732413), 100f));
         landmarkList.add(new Landmark("ゆめモール合志", new LatLng(32.902321,130.762525), 100f));
-
-
-
-
-
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        // ★★★ アプリ復帰時に位置情報の購読を開始 ★★★
         startLocationChecks();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        // ★★★ アプリ一時停止時に位置情報の購読を停止（バッテリー節約） ★★★
         stopLocationChecks();
     }
 
@@ -121,6 +143,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             enableMyLocation();
+            // ★★★ マップ準備完了後、位置情報の購読を開始 ★★★
+            startLocationChecks();
         } else {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -136,6 +160,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 enableMyLocation();
+                // ★★★ 権限許可後、位置情報の購読を**必ず**開始 ★★★
+                startLocationChecks();
             } else {
                 Toast.makeText(this, "位置情報の許可がないため、現在地を表示できません", Toast.LENGTH_LONG).show();
                 LatLng kumamotoKosen = new LatLng(32.876637, 130.74851);
@@ -147,6 +173,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
+
+            // ★★★ マップのカメラ移動（これはgetLastLocationでOK） ★★★
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
                 if (location != null) {
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -159,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void setupMapDrawings() {
+        // ... (この中身は変更なし) ...
         for (Landmark landmark : landmarkList) {
             mMap.addMarker(new MarkerOptions().position(landmark.getLocation()).title(landmark.getName()));
             mMap.addCircle(new CircleOptions()
@@ -168,7 +197,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     .strokeWidth(5f)
                     .fillColor(0x55ff0000));
         }
-
 
         LatLng southWest = new LatLng(32.84, 130.72);
         LatLng northEast = new LatLng(32.93, 130.82);
@@ -196,60 +224,79 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mMap.addPolygon(koshiBorderMoreDetailed);
     }
 
+    // ★★★ startLocationChecks を「購読開始」処理に変更 ★★★
     private void startLocationChecks() {
-        locationCheckRunnable = new Runnable() {
-            @Override
-            public void run() {
-                checkDistanceToLandmarks();
-                locationHandler.postDelayed(this, 5000);
-            }
-        };
-        locationHandler.post(locationCheckRunnable);
-    }
+        // 1. 位置情報リクエストの設定（5秒間隔）
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setInterval(5000); // 5000ミリ秒 = 5秒
+        locationRequest.setFastestInterval(3000); // 最速3秒
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
-    private void stopLocationChecks() {
-        if (locationCheckRunnable != null) {
-            locationHandler.removeCallbacks(locationCheckRunnable);
-        }
-    }
-
-    private void checkDistanceToLandmarks() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        // 2. 権限を再度チェック（重要）
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // 権限がなければ何もしない（リクエストされるのを待つ）
             return;
         }
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-            if (location == null) return;
+        // 3. 位置情報の購読を開始
+        fusedLocationClient.requestLocationUpdates(locationRequest,
+                locationCallback,
+                Looper.getMainLooper());
+    }
 
-            boolean currentlyInArea = false;
+    // ★★★ stopLocationChecks を「購読停止」処理に変更 ★★★
+    private void stopLocationChecks() {
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
+    }
 
-            for (Landmark landmark : landmarkList) {
-                float[] results = new float[1];
-                Location.distanceBetween(
-                        location.getLatitude(), location.getLongitude(),
-                        landmark.getLocation().latitude, landmark.getLocation().longitude,
-                        results);
-                float distanceInMeters = results[0];
+    // ★★★ checkDistanceToLandmarks を「Location を受け取る」形に変更 ★★★
+    private void checkDistanceToLandmarks(Location location) {
+        // (getLastLocation の呼び出しは不要になったので削除)
 
+        boolean currentlyInArea = false;
+        for (Landmark landmark : landmarkList) {
+            float[] results = new float[1];
+            Location.distanceBetween(
+                    location.getLatitude(), location.getLongitude(),
+                    landmark.getLocation().latitude, landmark.getLocation().longitude,
+                    results);
+            float distanceInMeters = results[0];
 
-                landmark.setDistance(distanceInMeters);
+            landmark.setDistance(distanceInMeters);
 
-                if (distanceInMeters < landmark.getRadius()) {
-                    currentlyInArea = true;
+            if (distanceInMeters < landmark.getRadius()) {
+                currentlyInArea = true;
+                // 注：ここではbreakしない（全ランドマークの距離を計算してボトムシートに渡すため）
+            }
+        }
 
+        // ★★★ 以下の表示・非表示ロジックはRENTOさんの元のコードのままで完璧です ★★★
+        if (currentlyInArea && !isInLandmarkArea) {
+            if(getPieceButton != null) {
+                getPieceButton.setBackgroundResource(R.drawable.rainbow_animation);
+                rainbowAnimation = (AnimationDrawable) getPieceButton.getBackground();
+                if (rainbowAnimation != null) {
+                    rainbowAnimation.start();
                 }
+                getPieceButton.setVisibility(View.VISIBLE);
             }
+            Toast.makeText(MainActivity.this, "ランドマークエリアに入りました！", Toast.LENGTH_SHORT).show();
+            isInLandmarkArea = true;
 
-            if (currentlyInArea && !isInLandmarkArea) {
-                // getPieceButton が null でないことを確認
-                if(getPieceButton != null) getPieceButton.setVisibility(View.VISIBLE);
-                Toast.makeText(MainActivity.this, "ランドマークエリアに入りました！", Toast.LENGTH_SHORT).show();
-                isInLandmarkArea = true;
-            } else if (!currentlyInArea && isInLandmarkArea) {
-                if(getPieceButton != null) getPieceButton.setVisibility(View.GONE);
-                Toast.makeText(MainActivity.this, "ランドマークエリアから出ました。", Toast.LENGTH_SHORT).show();
-                isInLandmarkArea = false;
+        } else if (!currentlyInArea && isInLandmarkArea) {
+            if(getPieceButton != null) {
+                getPieceButton.setVisibility(View.GONE);
+                if (rainbowAnimation != null) {
+                    rainbowAnimation.stop();
+                    rainbowAnimation = null;
+                }
+                getPieceButton.setBackgroundResource(R.drawable.bordered_button_background);
             }
-        });
+            Toast.makeText(MainActivity.this, "ランドマークエリアから出ました。", Toast.LENGTH_SHORT).show();
+            isInLandmarkArea = false;
+        }
     }
 }

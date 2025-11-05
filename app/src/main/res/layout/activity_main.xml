@@ -11,8 +11,8 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="-16dp" />
+        tools:layout_editor_absoluteX="56dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/list_button"
@@ -65,41 +65,66 @@
         android:id="@+id/button_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_marginStart="40dp"
         android:layout_marginEnd="40dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="28dp"
+        android:alpha="0.9"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:alpha="0.9"
-        >
+        app:layout_constraintStart_toStartOf="parent">
 
+        <!-- 1. 上のボタン（これはそのまま） -->
         <Button
             android:id="@+id/get_piece_button"
-            android:layout_width="match_parent"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:alpha="0.99"
             android:background="@drawable/bordered_button_background"
             android:text="ピースをゲット!!"
             android:textColor="@color/origin_yellow"
-            android:textSize="20sp"
+            android:textSize="17sp"
             android:textStyle="bold"
-            android:layout_marginBottom="8dp"
             android:visibility="gone"
-            tools:visibility="visible"
-            android:alpha="0.99"
-            />
+            tools:visibility="visible" />
 
-        <Button
-            android:id="@+id/collection_button"
+        <!-- 2. 横並びボタン用の新しい水平LinearLayout -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bordered_button_background"
-            android:text="コレクションを見る"
-            android:textColor="@color/origin_orange"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:alpha="0.99"/>
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <!-- 3. パズルを見るボタン (均等割り付け) -->
+            <Button
+                android:id="@+id/view_puzzle_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bordered_button_background"
+                android:text="パズルを見る"
+                android:textColor="@color/origin_orange"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+            <!-- 4. コレクションを見るボタン (均等割り付け) -->
+            <Button
+                android:id="@+id/collection_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:alpha="0.99"
+                android:background="@drawable/bordered_button_background"
+                android:text="コレクション"
+                android:textColor="@color/origin_orange"
+                android:textSize="17sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

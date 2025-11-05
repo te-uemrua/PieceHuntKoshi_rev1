@@ -2,12 +2,12 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
 
-    <!-- 塗りつぶしの色（灰色） -->
-    <solid android:color="#E0E0E0" />
 
-    <!-- 枠線の色と太さ（少し薄い灰色） -->
+    <solid android:color="@color/gray" />
+
+
     <stroke
-        android:width="1dp"
-        android:color="#BDBDBD" />
+        android:width="2dp"
+        android:color="#FFFFFF" />
 
 </shape>

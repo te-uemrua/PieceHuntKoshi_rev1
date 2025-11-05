@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-10-22T05:46:30.543960800Z">
+        <DropdownSelection timestamp="2025-11-05T05:22:31.332856Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\jonou\.android\avd\Pixel.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/rento/.android/avd/Pixel.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,7 +15,7 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\jonou\.android\avd\Pixel.avd" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=/Users/rento/.android/avd/Pixel.avd" />
               </handle>
             </Target>
           </targets>
