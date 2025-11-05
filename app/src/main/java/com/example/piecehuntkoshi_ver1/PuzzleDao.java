@@ -13,7 +13,6 @@ public interface PuzzleDao {
     @Insert
     void insertPuzzle(Puzzle puzzle);
 
-    // Get ALL puzzles, not just completed ones
     @Query("SELECT * FROM puzzles")
     List<Puzzle> getAllPuzzles();
 
@@ -28,7 +27,8 @@ public interface PuzzleDao {
     @Insert
     void insertAllPieces(List<PuzzleData> pieces);
 
-    @Query("SELECT * FROM puzzle_pieces WHERE puzzle_id = :puzzleId")
+    // Get pieces for a specific puzzle, sorted by their index
+    @Query("SELECT * FROM puzzle_pieces WHERE puzzle_id = :puzzleId ORDER BY piece_index ASC")
     List<PuzzleData> getPiecesForPuzzle(int puzzleId);
 
     @Query("SELECT COUNT(*) FROM puzzle_pieces")

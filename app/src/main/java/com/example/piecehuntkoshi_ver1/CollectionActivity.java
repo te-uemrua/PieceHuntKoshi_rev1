@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast; // Import the Toast class
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,7 +41,7 @@ public class CollectionActivity extends AppCompatActivity implements CollectionA
     @Override
     protected void onResume() {
         super.onResume();
-        loadAllPuzzles(); // Renamed from loadCompletedPuzzles
+        loadAllPuzzles();
     }
 
     private void setupRecyclerView() {
@@ -49,20 +49,15 @@ public class CollectionActivity extends AppCompatActivity implements CollectionA
         collectionRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
     }
 
-    private void loadAllPuzzles() { // Renamed from loadCompletedPuzzles
+    private void loadAllPuzzles() {
         databaseExecutor.execute(() -> {
-            if (db.puzzleDao().getPuzzleCount() == 0) {
-                addDummyPuzzles();
-            }
-
-            // Fetch ALL puzzles from the database
+            // The database is now pre-populated on creation, so no need to check for dummy data here.
             List<Puzzle> allPuzzles = db.puzzleDao().getAllPuzzles();
 
             runOnUiThread(() -> {
                 collectionAdapter = new CollectionAdapter(allPuzzles, this);
                 collectionRecyclerView.setAdapter(collectionAdapter);
 
-                // You might want to update this text logic later
                 long completedCount = allPuzzles.stream().filter(Puzzle::isCompleted).count();
                 String countText = completedCount + " / " + allPuzzles.size() + " 個コンプリート";
                 collectedPuzzlesCountText.setText(countText);
@@ -70,12 +65,7 @@ public class CollectionActivity extends AppCompatActivity implements CollectionA
         });
     }
 
-    private void addDummyPuzzles() {
-        // Add one completed and a few uncompleted puzzles for testing
-        db.puzzleDao().insertPuzzle(new Puzzle("熊本県農業公園", R.drawable.ic_launcher_background, true));
-        db.puzzleDao().insertPuzzle(new Puzzle("No.2", R.drawable.ic_launcher_foreground, false));
-        db.puzzleDao().insertPuzzle(new Puzzle("No.3", R.drawable.ic_launcher_foreground, false));
-    }
+    // The addDummyPuzzles method is no longer needed here as it's handled in AppDatabase
 
     @Override
     public void onPuzzleClick(Puzzle puzzle) {
