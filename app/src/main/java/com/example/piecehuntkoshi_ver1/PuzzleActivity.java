@@ -23,17 +23,15 @@ public class PuzzleActivity extends AppCompatActivity {
     private AppDatabase db;
     private ExecutorService databaseExecutor = Executors.newSingleThreadExecutor();
 
-    private int currentPuzzleId = -1; // Variable to hold the passed puzzle ID
+    private int currentPuzzleId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.puzzle_screen);
 
-        // Get the puzzleId from the Intent
         currentPuzzleId = getIntent().getIntExtra("PUZZLE_ID", -1);
         if (currentPuzzleId == -1) {
-            // If no ID is passed, finish the activity as it cannot display anything
             finish();
             return;
         }
@@ -55,10 +53,9 @@ public class PuzzleActivity extends AppCompatActivity {
 
     private void loadPiecesFromDatabase() {
         databaseExecutor.execute(() -> {
-            // Load pieces for the specific puzzle ID
             List<PuzzleData> piecesFromDb = db.puzzleDao().getPiecesForPuzzle(currentPuzzleId);
 
-            // If the puzzle has no pieces, initialize them (optional, depends on your logic)
+            // If the puzzle has no pieces in the DB, initialize them now.
             if (piecesFromDb.isEmpty()) {
                 piecesFromDb = initializePieceListForPuzzle(currentPuzzleId);
                 db.puzzleDao().insertAllPieces(piecesFromDb);
@@ -85,20 +82,18 @@ public class PuzzleActivity extends AppCompatActivity {
         }
     }
 
-    // This method now initializes pieces for a specific puzzle
     private List<PuzzleData> initializePieceListForPuzzle(int puzzleId) {
         List<PuzzleData> localPieceList = new ArrayList<>();
-        // This logic needs to be adapted based on your puzzle designs
-        // For now, it just creates 9 generic pieces for the given puzzleId
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_1, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_2, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_3, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_4, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_5, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_6, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_7, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_8, false));
-        localPieceList.add(new PuzzleData(puzzleId, R.drawable.piece_9, false));
+        // This logic correctly initializes pieces for a specific puzzle with correct drawable IDs.
+        localPieceList.add(new PuzzleData(puzzleId, 0, R.drawable.piece_1, false));
+        localPieceList.add(new PuzzleData(puzzleId, 1, R.drawable.piece_2, false));
+        localPieceList.add(new PuzzleData(puzzleId, 2, R.drawable.piece_3, false));
+        localPieceList.add(new PuzzleData(puzzleId, 3, R.drawable.piece_4, false));
+        localPieceList.add(new PuzzleData(puzzleId, 4, R.drawable.piece_5, false));
+        localPieceList.add(new PuzzleData(puzzleId, 5, R.drawable.piece_6, false));
+        localPieceList.add(new PuzzleData(puzzleId, 6, R.drawable.piece_7, false));
+        localPieceList.add(new PuzzleData(puzzleId, 7, R.drawable.piece_8, false));
+        localPieceList.add(new PuzzleData(puzzleId, 8, R.drawable.piece_9, false));
         return localPieceList;
     }
 
