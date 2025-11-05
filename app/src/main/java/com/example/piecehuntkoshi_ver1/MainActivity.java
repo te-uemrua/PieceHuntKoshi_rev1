@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
+import android.media.MediaPlayer; // ★★★ SE用にインポート ★★★
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -61,6 +62,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String currentAreaState = "NONE";
     private LandmarkListBottomSheet bottomSheet;
 
+    private MediaPlayer soundEffectPlayer; // ★★★ SE再生用のプレーヤー ★★★
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getPieceButton = findViewById(R.id.get_piece_button);
         getPieceButton.setOnClickListener(v -> {
+            playSoundEffect(R.raw.btn); // ★★★ SE再生 ★★★
             if (currentActiveLandmark != null && !currentActiveLandmark.isOnCooldown()) {
                 Intent intent = new Intent(MainActivity.this, shake_phone.class);
                 intent.putExtra("LANDMARK_ID", currentActiveLandmark.getLandmarkId());
@@ -78,12 +82,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         collectionButton = findViewById(R.id.collection_button);
         collectionButton.setOnClickListener(v -> {
+            playSoundEffect(R.raw.btn); // ★★★ SE再生 ★★★
             Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
             startActivity(intent);
         });
 
         viewPuzzleButton = findViewById(R.id.view_puzzle_button);
         viewPuzzleButton.setOnClickListener(v -> {
+            playSoundEffect(R.raw.btn); // ★★★ SE再生 ★★★
             Intent intent = new Intent(MainActivity.this, PuzzleActivity.class);
             intent.putExtra("PUZZLE_ID", 1);
             startActivity(intent);
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         FloatingActionButton listButton = findViewById(R.id.list_button);
         listButton.setOnClickListener(v -> {
+            playSoundEffect(R.raw.list); // ★★★ SE再生 (list.mp3) ★★★
             if (bottomSheet == null) {
                 bottomSheet = LandmarkListBottomSheet.newInstance(landmarkList);
             }
@@ -174,6 +181,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onPause() {
         super.onPause();
         stopLocationChecks();
+    }
+
+    // ★★★ 画面終了時にSEプレーヤーを解放 ★★★
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (soundEffectPlayer != null) {
+            soundEffectPlayer.release();
+            soundEffectPlayer = null;
+        }
+        // (ついでにアニメーションも停止)
+        if (rainbowAnimation != null) {
+            rainbowAnimation.stop();
+            rainbowAnimation = null;
+        }
     }
 
     @Override
@@ -346,6 +368,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
 
+        // --- 状態が「変わった瞬間」に音を鳴らす ---
+        if (newState.equals("AVAILABLE") || newState.equals("COOLDOWN")) {
+            playSoundEffect(R.raw.in); // ★★★ エリア侵入音 ★★★
+        }
+
         currentAreaState = newState;
 
         if (getPieceButton == null) return;
@@ -384,6 +411,26 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getPieceButton.setBackgroundResource(R.drawable.bordered_button_background);
                 getPieceButton.setEnabled(true);
                 break;
+        }
+    }
+
+    // ★★★ SE再生用のヘルパーメソッド ★★★
+    private void playSoundEffect(int soundResourceId) {
+        // 以前のSEが再生中なら、停止・解放する
+        if (soundEffectPlayer != null) {
+            soundEffectPlayer.release();
+            soundEffectPlayer = null;
+        }
+
+        // 新しいSEを作成して再生
+        soundEffectPlayer = MediaPlayer.create(this, soundResourceId);
+        if (soundEffectPlayer != null) {
+            // 再生が終わったら自動でリソースを解放する
+            soundEffectPlayer.setOnCompletionListener(mp -> {
+                mp.release();
+                soundEffectPlayer = null; // プレーヤーをnullに戻す
+            });
+            soundEffectPlayer.start();
         }
     }
 }

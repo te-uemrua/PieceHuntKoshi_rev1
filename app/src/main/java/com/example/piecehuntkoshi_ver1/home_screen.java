@@ -3,12 +3,13 @@ package com.example.piecehuntkoshi_ver1;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat; // Import ActivityCompat
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.MediaPlayer; // BGM用にインポート
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 public class home_screen extends AppCompatActivity {
 
     private Button startButton;
+    private MediaPlayer mediaPlayer; // BGMプレーヤー用の変数
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
@@ -35,6 +37,13 @@ public class home_screen extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
+
+        // BGMの初期化
+        // (R.raw.bgm は、res/raw/bgm.mp3 ファイルを指します)
+        mediaPlayer = MediaPlayer.create(this, R.raw.homebgm); // "bgm"の部分はファイル名に合わせてください
+        if (mediaPlayer != null) {
+            mediaPlayer.setLooping(true); // BGMをループ再生する設定
+        }
 
         startButton = findViewById(R.id.start_button);
 
@@ -58,8 +67,32 @@ public class home_screen extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Update button state every time the screen is resumed, in case the user changes permissions in settings
+        // Update button state every time the screen is resumed
         updateStartButtonState();
+
+        // 画面が戻ってきたらBGMを再生
+        if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // BGMを一時停止
+        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // BGMのリソースを解放（メモリリーク防止）
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
     private void checkLocationPermission() {
