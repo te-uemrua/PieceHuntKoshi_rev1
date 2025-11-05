@@ -25,4 +25,17 @@
         android:textColor="@color/origin_yellow"
         />
 
+    <!-- ★★★ クールタイム表示用のTextViewを追加 ★★★ -->
+    <TextView
+        android:id="@+id/landmark_cooldown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="クールタイム中: あと 23時間59分"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp"
+        android:textColor="@android:color/holo_blue_light"
+        android:textStyle="bold"
+        android:visibility="gone"
+        />
+
 </LinearLayout>
