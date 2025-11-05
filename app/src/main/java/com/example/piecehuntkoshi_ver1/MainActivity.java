@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         landmarkList.add(new Landmark("元気の森公園", new LatLng(32.866013,130.76833), 400f));
         landmarkList.add(new Landmark("合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f));
         landmarkList.add(new Landmark("合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f));
-        landmarkList.add(new Landmark("スプリングガーデン御代志", new LatLng(32.880799,130.748208), 300f));
+        landmarkList.add(new Landmark("スプリングガーデン御代志", new LatLng(32.880799,130.748208), 500f));
         landmarkList.add(new Landmark("竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f));
         landmarkList.add(new Landmark("妙泉寺公園", new LatLng(32.858651,130.732413), 100f));
         landmarkList.add(new Landmark("ゆめモール合志", new LatLng(32.902321,130.762525), 100f));
