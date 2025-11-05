@@ -67,8 +67,12 @@ public class shake_phone extends Activity implements SensorEventListener {
             if (now - lastShakeTime > 500) {
                 lastShakeTime = now;
 
-                // 🔽 ピース獲得画面へ遷移
+                // ランダムなピース番号を生成（0〜8）
+                int randomPiece = new java.util.Random().nextInt(9);
+
+                // 🔽 ピース獲得画面へ遷移し、番号を渡す
                 Intent intent = new Intent(this, PieceGetActivity.class);
+                intent.putExtra("pieceNumber", randomPiece); // ← 追加
                 startActivity(intent);
             }
         }
