@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,6 +16,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PieceHuntKoshi_ver1">
+        <activity
+            android:name=".PieceGetActivity"
+            android:exported="false" />
+
         <activity
 
             android:name=".CollectionActivity"
@@ -32,9 +38,6 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".puzzle_screen"
             android:exported="false" />
         <activity
             android:name=".shake_phone"

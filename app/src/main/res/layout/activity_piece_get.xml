@@ -11,7 +11,7 @@
         android:id="@+id/textView"
         android:layout_width="285dp"
         android:layout_height="78dp"
-        android:text="Piece Get!"
+        android:text="PieceGet!"
         android:textSize="60sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/imageView2"
@@ -20,10 +20,10 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/backmainbutton"
         android:layout_width="272dp"
         android:layout_height="58dp"
-        android:text="コレクションを見る"
+        android:text="コレクション"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
