@@ -10,7 +10,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
-import android.media.MediaPlayer; // ★★★ SE用にインポート ★★★
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker; // ★★★ Marker をインポート ★★★
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
@@ -62,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String currentAreaState = "NONE";
     private LandmarkListBottomSheet bottomSheet;
 
-    private MediaPlayer soundEffectPlayer; // ★★★ SE再生用のプレーヤー ★★★
+    private MediaPlayer soundEffectPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         getPieceButton = findViewById(R.id.get_piece_button);
         getPieceButton.setOnClickListener(v -> {
-            playSoundEffect(R.raw.btn); // ★★★ SE再生 ★★★
+            playSoundEffect(R.raw.btn);
             if (currentActiveLandmark != null && !currentActiveLandmark.isOnCooldown()) {
                 Intent intent = new Intent(MainActivity.this, shake_phone.class);
                 intent.putExtra("LANDMARK_ID", currentActiveLandmark.getLandmarkId());
@@ -82,14 +83,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         collectionButton = findViewById(R.id.collection_button);
         collectionButton.setOnClickListener(v -> {
-            playSoundEffect(R.raw.btn); // ★★★ SE再生 ★★★
+            playSoundEffect(R.raw.btn);
             Intent intent = new Intent(MainActivity.this, CollectionActivity.class);
             startActivity(intent);
         });
 
         viewPuzzleButton = findViewById(R.id.view_puzzle_button);
         viewPuzzleButton.setOnClickListener(v -> {
-            playSoundEffect(R.raw.btn); // ★★★ SE再生 ★★★
+            playSoundEffect(R.raw.btn);
             Intent intent = new Intent(MainActivity.this, PuzzleActivity.class);
             intent.putExtra("PUZZLE_ID", 1);
             startActivity(intent);
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         FloatingActionButton listButton = findViewById(R.id.list_button);
         listButton.setOnClickListener(v -> {
-            playSoundEffect(R.raw.list); // ★★★ SE再生 (list.mp3) ★★★
+            playSoundEffect(R.raw.list);
             if (bottomSheet == null) {
                 bottomSheet = LandmarkListBottomSheet.newInstance(landmarkList);
             }
@@ -127,20 +128,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void initializeLandmarks() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "amby_kumamoto", "アンビー熊本", new LatLng(32.880783,130.785207),200f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "classsino_marche", "クラッシーノマルシェ", new LatLng(32.891637,130.732765),200f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "country_park", "熊本県農業カントリーパーク", new LatLng(32.8900575, 130.7595619), 500f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "genki_no_mori", "元気の森公園", new LatLng(32.866013,130.76833), 400f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "goshijuku_ato", "合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "manga_museum", "合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "spring_garden", "スプリングガーデン御代志", new LatLng(32.880799,130.748208), 500f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "takaba_jyouato", "竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "myosenji_park", "妙泉寺公園", new LatLng(32.858651,130.732413), 100f));
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "yumemall_koshi", "ゆめモール合志", new LatLng(32.902321,130.762525), 100f));
+        // ★★★ 説明文と、RENTOさんがres/drawableに追加する画像ファイル名を指定 ★★★
+        // (例: R.drawable.amby_kumamoto_img)
+        // (画像がない場合は 0 を指定)
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "amby_kumamoto", "アンビー熊本", new LatLng(32.880783,130.785207),200f,
+                "合志市にある大型複合商業施設。飲食店や雑貨屋が豊富。", R.drawable.amby_kumamoto));
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "classsino_marche", "クラッシーノマルシェ", new LatLng(32.891637,130.732765),200f,
+                "地元の新鮮な野菜や特産品が並ぶマルシェ。", R.drawable.classino_marche));
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "country_park", "熊本県農業カントリーパーク", new LatLng(32.8900575, 130.7595619), 500f,
+                "広大な敷地を持つ農業公園。イベントも多数開催。", R.drawable.country_park));
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "genki_no_mori", "元気の森公園", new LatLng(32.866013,130.76833), 400f,
+                "大型遊具や芝生広場がある、家族連れに人気の公園。", R.drawable.genki_no_mori));
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "goshijuku_ato", "合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f,
+                "合志市の教育の歴史を感じられる史跡。", 0)); // 画像がない場合は 0
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "manga_museum", "合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f,
+                "多くのマンガを閲覧できる文化施設。", R.drawable.manga_museum));
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "spring_garden", "スプリングガーデン御代志", new LatLng(32.880799,130.748208), 500f,
+                "住宅地と商業施設が融合したエリア。", 0)); // 画像がない場合は 0
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "takaba_jyouato", "竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f,
+                "歴史ある城跡で、現在は公園として整備されている。", R.drawable.takaba_jyouato));
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "myosenji_park", "妙泉寺公園", new LatLng(32.858651,130.732413), 100f,
+                "桜やツツジが美しい、市民の憩いの場。", R.drawable.myosenji_park));
+
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "yumemall_koshi", "ゆめモール合志", new LatLng(32.902321,130.762525), 100f,
+                "スーパーマーケットを中心としたショッピングモール。", R.drawable.yumemall_koshi));
     }
 
-    private Landmark createLandmarkWithTimestamp(SharedPreferences prefs, String id, String name, LatLng location, float radius) {
-        Landmark landmark = new Landmark(id, name, location, radius);
+    // ★★★ メソッドの引数を修正 ★★★
+    private Landmark createLandmarkWithTimestamp(SharedPreferences prefs, String id, String name, LatLng location, float radius, String description, int imageResourceId) {
+        Landmark landmark = new Landmark(id, name, location, radius, description, imageResourceId); // ★★★ 引数を渡す ★★★
         long lastAcquired = prefs.getLong(id + LAST_ACQUIRED_PREFIX, 0);
         landmark.setLastAcquiredTimestamp(lastAcquired);
         return landmark;
@@ -183,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         stopLocationChecks();
     }
 
-    // ★★★ 画面終了時にSEプレーヤーを解放 ★★★
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -191,7 +214,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             soundEffectPlayer.release();
             soundEffectPlayer = null;
         }
-        // (ついでにアニメーションも停止)
         if (rainbowAnimation != null) {
             rainbowAnimation.stop();
             rainbowAnimation = null;
@@ -201,6 +223,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+
+        // ★★★ カスタム情報ウィンドウアダプタをマップにセット ★★★
+        mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MainActivity.this));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             enableMyLocation();
@@ -246,8 +271,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private void setupMapDrawings() {
         for (Landmark landmark : landmarkList) {
-            mMap.addMarker(new MarkerOptions().position(landmark.getLocation()).title(landmark.getName()));
 
+            // ★★★ マーカーにLandmarkオブジェクトを「タグ付け」する ★★★
+            Marker marker = mMap.addMarker(new MarkerOptions()
+                    .position(landmark.getLocation())
+                    .title(landmark.getName())); // titleは念のため残す
+
+            // ★★★ これが最重要！ マーカーとデータを紐付けます ★★★
+            if (marker != null) {
+                marker.setTag(landmark);
+            }
+
+            // --- (円の描画ロジックは変更なし) ---
             CircleOptions circleOptions = new CircleOptions()
                     .center(landmark.getLocation())
                     .radius(landmark.getRadius())
@@ -256,10 +291,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             Circle circle = mMap.addCircle(circleOptions);
             landmark.setGoogleMapCircle(circle);
-
             updateMapCircleColor(landmark);
         }
 
+        // --- (境界線の描画ロジックは変更なし) ---
         LatLng southWest = new LatLng(32.84, 130.72);
         LatLng northEast = new LatLng(32.93, 130.82);
         LatLngBounds koshiBounds = new LatLngBounds(southWest, northEast);
@@ -368,9 +403,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
 
-        // --- 状態が「変わった瞬間」に音を鳴らす ---
         if (newState.equals("AVAILABLE") || newState.equals("COOLDOWN")) {
-            playSoundEffect(R.raw.in); // ★★★ エリア侵入音 ★★★
+            playSoundEffect(R.raw.in);
         }
 
         currentAreaState = newState;
@@ -414,21 +448,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-    // ★★★ SE再生用のヘルパーメソッド ★★★
     private void playSoundEffect(int soundResourceId) {
-        // 以前のSEが再生中なら、停止・解放する
         if (soundEffectPlayer != null) {
             soundEffectPlayer.release();
             soundEffectPlayer = null;
         }
 
-        // 新しいSEを作成して再生
         soundEffectPlayer = MediaPlayer.create(this, soundResourceId);
         if (soundEffectPlayer != null) {
-            // 再生が終わったら自動でリソースを解放する
             soundEffectPlayer.setOnCompletionListener(mp -> {
                 mp.release();
-                soundEffectPlayer = null; // プレーヤーをnullに戻す
+                soundEffectPlayer = null;
             });
             soundEffectPlayer.start();
         }

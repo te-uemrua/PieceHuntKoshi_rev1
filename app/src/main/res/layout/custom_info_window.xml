@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@drawable/glass_card"
+    android:minWidth="250dp">
+
+    <!-- 写真を表示する場所 -->
+    <ImageView
+        android:id="@+id/info_window_image"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        android:src="@android:drawable/ic_menu_gallery" />
+
+    <!-- タイトル（施設名） -->
+    <TextView
+        android:id="@+id/info_window_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="ランドマーク名"
+        android:textColor="@color/origin_orange"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <!-- 説明文 -->
+    <TextView
+        android:id="@+id/info_window_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="ここに施設の説明文が入ります。"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+</LinearLayout>
