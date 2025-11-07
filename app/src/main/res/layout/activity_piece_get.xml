@@ -11,10 +11,10 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="285dp"
-        android:layout_height="78dp"
-        android:text="PieceGet!"
-        android:textSize="60sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="PieceGet!!"
+        android:textSize="40sp"
         android:textStyle="bold"
         android:textColor="@color/origin_orange"
         app:layout_constraintBottom_toTopOf="@+id/imageView2"

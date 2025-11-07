@@ -20,25 +20,24 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:layout_marginEnd="16dp"
+        android:alpha="0.9"
         android:src="@drawable/ic_list"
+        app:backgroundTint="@color/origin_blue"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.229"
-        app:tint="@android:color/holo_orange_light"
-        app:backgroundTint="@color/origin_blue"
-        android:alpha="0.9"
-        />
+        app:layout_constraintVertical_bias="0.269"
+        app:tint="@android:color/holo_orange_light" />
 
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:alpha="0.95"
         android:background="@drawable/gradient_background"
         android:orientation="vertical"
         android:padding="30dp"
-        app:layout_constraintTop_toTopOf="parent"
-        android:alpha="0.95">
+        app:layout_constraintTop_toTopOf="@+id/map">
 
         <TextView
             android:layout_width="wrap_content"
@@ -56,7 +55,7 @@
             android:layout_marginTop="8dp"
             android:text="ランドマークを目指そう!!"
             android:textColor="@color/origin_yellow"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -107,7 +106,7 @@
                 android:background="@drawable/bordered_button_background"
                 android:text="パズルを見る"
                 android:textColor="@color/origin_orange"
-                android:textSize="17sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
             <!-- 4. コレクションを見るボタン (均等割り付け) -->
@@ -121,7 +120,7 @@
                 android:background="@drawable/bordered_button_background"
                 android:text="コレクション"
                 android:textColor="@color/origin_orange"
-                android:textSize="17sp"
+                android:textSize="15sp"
                 android:textStyle="bold" />
 
         </LinearLayout>

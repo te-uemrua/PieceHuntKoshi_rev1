@@ -31,11 +31,11 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         // Viewのコンポーネントを取得
         ImageView imageView = view.findViewById(R.id.info_window_image);
         TextView titleView = view.findViewById(R.id.info_window_title);
-        TextView descriptionView = view.findViewById(R.id.info_window_description);
+        TextView descriptionView = view.findViewById(R.id.info_window_description); // 説明TextViewを取得
 
         // データをセット
         titleView.setText(landmark.getName());
-        descriptionView.setText(landmark.getDescription());
+        descriptionView.setText(landmark.getDescription()); // 説明文をセット
 
         // 画像リソースIDが 0 (未設定) でなければ画像をセット
         if (landmark.getImageResourceId() != 0) {
@@ -47,18 +47,21 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         }
     }
 
-    @Nullable
-    @Override
-    public View getInfoWindow(@NonNull Marker marker) {
-        // このメソッドは null を返します（ウィンドウ枠はデフォルトを使うため）
-        return null;
-    }
-
     @NonNull
     @Override
-    public View getInfoContents(@NonNull Marker marker) {
-        // このメソッドでカスタムビュー（mWindow）を返します
+    public View getInfoWindow(@NonNull Marker marker) {
+        // ★★★ こちらで mWindow を返す ★★★
+        // これにより、デフォルトの白いフキダシ（枠）を使わず、
+        // XMLで指定した @drawable/glass_card が背景として使われます。
         renderWindowText(marker, mWindow);
         return mWindow;
+    }
+
+    @Nullable
+    @Override
+    public View getInfoContents(@NonNull Marker marker) {
+        // ★★★ こちらで null を返す ★★★
+        // getInfoWindow で View を返した場合、こちらは呼び出されません。
+        return null;
     }
 }
