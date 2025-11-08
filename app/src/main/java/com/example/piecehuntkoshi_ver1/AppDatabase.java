@@ -40,17 +40,11 @@ public abstract class AppDatabase extends RoomDatabase {
             Executors.newSingleThreadExecutor().execute(() -> {
                 PuzzleDao dao = INSTANCE.puzzleDao();
 
-                // --- Create Initial Puzzles ONLY ---
-                // The pieces will be created by PuzzleActivity when a puzzle is opened for the first time.
+                dao.insertPuzzle(new Puzzle("No.1", R.drawable.question, true));
 
-                // Puzzle 1 (Completed)
-                dao.insertPuzzle(new Puzzle("ヴイーブルくん", R.drawable.ic_launcher_background, true));
+                dao.insertPuzzle(new Puzzle("No.2", R.drawable.question, false));
 
-                // Puzzle 2 (Not Completed)
-                dao.insertPuzzle(new Puzzle("No.2", R.drawable.ic_launcher_foreground, false));
-
-                // Puzzle 3 (Not Completed)
-                dao.insertPuzzle(new Puzzle("No.3", R.drawable.ic_launcher_foreground, false));
+                dao.insertPuzzle(new Puzzle("No.3", R.drawable.question, false));
             });
         }
     };

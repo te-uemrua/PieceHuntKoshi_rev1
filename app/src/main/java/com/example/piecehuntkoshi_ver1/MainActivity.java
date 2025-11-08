@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         landmarkList.add(createLandmarkWithTimestamp(prefs, "manga_museum", "合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f,
                 "多くのマンガを閲覧できる文化施設。", R.drawable.manga_museum));
 
-        landmarkList.add(createLandmarkWithTimestamp(prefs, "spring_garden", "スプリングガーデン御代志", new LatLng(32.880799,130.748208), 500f,
+        landmarkList.add(createLandmarkWithTimestamp(prefs, "spring_garden", "スプリングガーデン御代志", new LatLng(32.880799,130.748208), 200f,
                 "住宅地と商業施設が融合したエリア。", 0)); // 画像がない場合は 0
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "takaba_jyouato", "竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f,

@@ -104,9 +104,9 @@
                 android:layout_weight="1"
                 android:layout_marginEnd="4dp"
                 android:background="@drawable/bordered_button_background"
-                android:text="パズルを見る"
+                android:text="パズル"
                 android:textColor="@color/origin_orange"
-                android:textSize="15sp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
 
             <!-- 4. コレクションを見るボタン (均等割り付け) -->
@@ -120,7 +120,7 @@
                 android:background="@drawable/bordered_button_background"
                 android:text="コレクション"
                 android:textColor="@color/origin_orange"
-                android:textSize="15sp"
+                android:textSize="11sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
