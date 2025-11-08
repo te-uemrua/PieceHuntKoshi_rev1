@@ -6,41 +6,58 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PieceGetActivity"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/gradient_background2"
     >
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottie_animation_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:lottie_rawRes="@raw/confetti_animation"
+        app:lottie_autoPlay="false"
+        app:lottie_loop="false"
+        android:elevation="10dp"
+        android:scaleType="centerCrop" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PieceGet!!"
+        android:text="ピースゲット!!"
         android:textSize="40sp"
         android:textStyle="bold"
-        android:textColor="@color/origin_orange"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
+        android:textColor="@color/origin_blue"
+        app:layout_constraintBottom_toTopOf="@+id/piece_image_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"/>
 
     <Button
         android:id="@+id/backmainbutton"
         android:layout_width="272dp"
         android:layout_height="58dp"
-        android:text="コレクション"
+        android:layout_marginTop="32dp"
+        android:text="マップに戻る"
         android:textSize="24sp"
         android:textColor="@color/origin_orange"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/piece_image_view" />
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="206dp"
-        android:layout_height="204dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/piece_image_view"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:layout_constraintBottom_toTopOf="@+id/backmainbutton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        tools:srcCompat="@drawable/piece_1" />
 </androidx.constraintlayout.widget.ConstraintLayout>
