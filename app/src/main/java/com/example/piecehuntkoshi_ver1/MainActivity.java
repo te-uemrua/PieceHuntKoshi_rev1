@@ -132,34 +132,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // (例: R.drawable.amby_kumamoto_img)
         // (画像がない場合は 0 を指定)
         landmarkList.add(createLandmarkWithTimestamp(prefs, "amby_kumamoto", "アンビー熊本", new LatLng(32.880783,130.785207),200f,
-                "合志市にある大型複合商業施設。飲食店や雑貨屋が豊富。", R.drawable.amby_kumamoto));
+                "合志市にある大型複合商業施設。飲食店や雑貨屋が豊富。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "classsino_marche", "クラッシーノマルシェ", new LatLng(32.891637,130.732765),200f,
-                "地元の新鮮な野菜や特産品が並ぶマルシェ。", R.drawable.classino_marche));
+                "地元の新鮮な野菜や特産品が並ぶマルシェ。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "country_park", "熊本県農業カントリーパーク", new LatLng(32.8900575, 130.7595619), 500f,
-                "広大な敷地を持つ農業公園。イベントも多数開催。", R.drawable.country_park));
+                "広大な敷地を持つ農業公園。イベントも多数開催。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "genki_no_mori", "元気の森公園", new LatLng(32.866013,130.76833), 400f,
-                "大型遊具や芝生広場がある、家族連れに人気の公園。", R.drawable.genki_no_mori));
+                "大型遊具や芝生広場がある、家族連れに人気の公園。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "goshijuku_ato", "合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f,
                 "合志市の教育の歴史を感じられる史跡。", 0)); // 画像がない場合は 0
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "manga_museum", "合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f,
-                "多くのマンガを閲覧できる文化施設。", R.drawable.manga_museum));
+                "多くのマンガを閲覧できる文化施設。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "spring_garden", "スプリングガーデン御代志", new LatLng(32.880799,130.748208), 200f,
                 "住宅地と商業施設が融合したエリア。", 0)); // 画像がない場合は 0
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "takaba_jyouato", "竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f,
-                "歴史ある城跡で、現在は公園として整備されている。", R.drawable.takaba_jyouato));
+                "歴史ある城跡で、現在は公園として整備されている。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "myosenji_park", "妙泉寺公園", new LatLng(32.858651,130.732413), 100f,
-                "桜やツツジが美しい、市民の憩いの場。", R.drawable.myosenji_park));
+                "桜やツツジが美しい、市民の憩いの場。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "yumemall_koshi", "ゆめモール合志", new LatLng(32.902321,130.762525), 100f,
-                "スーパーマーケットを中心としたショッピングモール。", R.drawable.yumemall_koshi));
+                "スーパーマーケットを中心としたショッピングモール。", 0));
     }
 
     // ★★★ メソッドの引数を修正 ★★★

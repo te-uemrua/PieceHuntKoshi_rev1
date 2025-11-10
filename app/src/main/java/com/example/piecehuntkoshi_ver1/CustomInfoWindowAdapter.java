@@ -3,7 +3,7 @@ package com.example.piecehuntkoshi_ver1;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+// import android.widget.ImageView; // ← 不要になるので削除
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,7 +29,7 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         }
 
         // Viewのコンポーネントを取得
-        ImageView imageView = view.findViewById(R.id.info_window_image);
+        // ImageView imageView = view.findViewById(R.id.info_window_image); // ← 削除
         TextView titleView = view.findViewById(R.id.info_window_title);
         TextView descriptionView = view.findViewById(R.id.info_window_description); // 説明TextViewを取得
 
@@ -37,14 +37,16 @@ public class CustomInfoWindowAdapter implements GoogleMap.InfoWindowAdapter {
         titleView.setText(landmark.getName());
         descriptionView.setText(landmark.getDescription()); // 説明文をセット
 
-        // 画像リソースIDが 0 (未設定) でなければ画像をセット
-        if (landmark.getImageResourceId() != 0) {
-            imageView.setImageResource(landmark.getImageResourceId());
-            imageView.setVisibility(View.VISIBLE);
-        } else {
-            // 画像がなければ非表示
-            imageView.setVisibility(View.GONE);
-        }
+        // ↓↓↓↓↓↓ 画像関連の処理をすべて削除 ↓↓↓↓↓↓
+        // // 画像リソースIDが 0 (未設定) でなければ画像をセット
+        // if (landmark.getImageResourceId() != 0) {
+        //     imageView.setImageResource(landmark.getImageResourceId());
+        //     imageView.setVisibility(View.VISIBLE);
+        // } else {
+        //     // 画像がなければ非表示
+        //     imageView.setVisibility(View.GONE);
+        // }
+        // ↑↑↑↑↑↑ 画像関連の処理をすべて削除 ↑↑↑↑↑↑
     }
 
     @NonNull
