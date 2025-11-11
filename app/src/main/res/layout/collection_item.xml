@@ -16,15 +16,13 @@
         android:padding="16dp"
         android:gravity="center_vertical">
 
-        <!-- 1. ピースの画像を表示するImageView -->
         <ImageView
             android:id="@+id/collection_piece_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:scaleType="centerCrop"
-            tools:src="@drawable/piece_1" /> <!-- tools:srcはプレビュー用のダミー画像 -->
+            tools:src="@drawable/piece_1" />
 
-        <!-- 2. ピースの名前や情報を表示するエリア -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -41,7 +39,7 @@
                 android:textColor="@color/black"
                 tools:text="ピース No.1" />
 
-            <!-- 将来、取得日時などを表示するためのTextView（今はコメントアウト）
+            <!--
             <TextView
                 android:id="@+id/collection_acquired_date"
                 android:layout_width="wrap_content"

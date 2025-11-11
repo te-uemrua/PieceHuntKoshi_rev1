@@ -9,7 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit; // ★★★ TimeUnit をインポート ★★★
+import java.util.concurrent.TimeUnit;
 
 public class LandmarkAdapter extends RecyclerView.Adapter<LandmarkAdapter.LandmarkViewHolder> {
 
@@ -30,20 +30,15 @@ public class LandmarkAdapter extends RecyclerView.Adapter<LandmarkAdapter.Landma
     public void onBindViewHolder(@NonNull LandmarkViewHolder holder, int position) {
         Landmark landmark = landmarkList.get(position);
         holder.nameTextView.setText(landmark.getName());
-
-        // 距離が計算されていれば表示
         if (landmark.getDistance() >= 0) {
             holder.distanceTextView.setText(String.format(Locale.JAPAN, "目的地までの距離: %.0f m", landmark.getDistance()));
         } else {
             holder.distanceTextView.setText("ここまでの距離: 計測中...");
         }
 
-        // ★★★ クールタイムのロジック ★★★
         if (landmark.isOnCooldown()) {
-            // クールタイム中の場合の処理
             long remainingMillis = (landmark.getLastAcquiredTimestamp() + (24 * 60 * 60 * 1000)) - System.currentTimeMillis();
 
-            // ミリ秒を「〇時間〇分」にフォーマット
             long hours = TimeUnit.MILLISECONDS.toHours(remainingMillis);
             long minutes = TimeUnit.MILLISECONDS.toMinutes(remainingMillis) % 60;
 
@@ -52,14 +47,10 @@ public class LandmarkAdapter extends RecyclerView.Adapter<LandmarkAdapter.Landma
             holder.cooldownTextView.setText(cooldownText);
             holder.cooldownTextView.setVisibility(View.VISIBLE);
 
-            // 距離テキストの色をグレーアウトする（オプション）
             holder.distanceTextView.setTextColor(Color.GRAY);
 
         } else {
-            // クールタイム中でない場合の処理
             holder.cooldownTextView.setVisibility(View.GONE);
-            // 距離テキストの色を元に戻す
-            // R.color.origin_yellow を直接使えないので、Context経由で色を取得
             holder.distanceTextView.setTextColor(holder.distanceTextView.getContext().getColor(R.color.origin_yellow));
         }
     }
@@ -72,13 +63,13 @@ public class LandmarkAdapter extends RecyclerView.Adapter<LandmarkAdapter.Landma
     static class LandmarkViewHolder extends RecyclerView.ViewHolder {
         TextView nameTextView;
         TextView distanceTextView;
-        TextView cooldownTextView; // ★★★ クールタイム用TextViewを追加 ★★★
+        TextView cooldownTextView;
 
         public LandmarkViewHolder(@NonNull View itemView) {
             super(itemView);
             nameTextView = itemView.findViewById(R.id.landmark_name);
             distanceTextView = itemView.findViewById(R.id.landmark_distance);
-            cooldownTextView = itemView.findViewById(R.id.landmark_cooldown); // ★★★ 紐付け ★★★
+            cooldownTextView = itemView.findViewById(R.id.landmark_cooldown);
         }
     }
 }

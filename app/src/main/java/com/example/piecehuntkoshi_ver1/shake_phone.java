@@ -43,7 +43,6 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
 
         instructionText = findViewById(R.id.instruction_text);
 
-        // XML側で 23sp を指定したので、Javaでの setTextSize は不要
 
         landmarkId = getIntent().getStringExtra("LANDMARK_ID");
         landmarkName = getIntent().getStringExtra("LANDMARK_NAME");
@@ -151,7 +150,6 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // 何もしない
     }
 
     @Override

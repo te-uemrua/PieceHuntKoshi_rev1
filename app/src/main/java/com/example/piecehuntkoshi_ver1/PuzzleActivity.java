@@ -55,7 +55,6 @@ public class PuzzleActivity extends AppCompatActivity {
         databaseExecutor.execute(() -> {
             List<PuzzleData> piecesFromDb = db.puzzleDao().getPiecesForPuzzle(currentPuzzleId);
 
-            // If the puzzle has no pieces in the DB, initialize them now.
             if (piecesFromDb.isEmpty()) {
                 piecesFromDb = initializePieceListForPuzzle(currentPuzzleId);
                 db.puzzleDao().insertAllPieces(piecesFromDb);
@@ -84,7 +83,6 @@ public class PuzzleActivity extends AppCompatActivity {
 
     private List<PuzzleData> initializePieceListForPuzzle(int puzzleId) {
         List<PuzzleData> localPieceList = new ArrayList<>();
-        // This logic correctly initializes pieces for a specific puzzle with correct drawable IDs.
         localPieceList.add(new PuzzleData(puzzleId, 0, R.drawable.piece_1, false));
         localPieceList.add(new PuzzleData(puzzleId, 1, R.drawable.piece_2, false));
         localPieceList.add(new PuzzleData(puzzleId, 2, R.drawable.piece_3, false));

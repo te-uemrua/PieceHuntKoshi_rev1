@@ -1,7 +1,6 @@
 package com.example.piecehuntkoshi_ver1;
 
 import android.content.Intent;
-// import android.graphics.Color; // Lottieでは不要
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.animation.Animation;
@@ -15,16 +14,13 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-// ★★★ Konfetti関連のimportをすべて削除 ★★★
-
-// ★★★ Lottieのimportを1行追加 ★★★
 import com.airbnb.lottie.LottieAnimationView;
 
 
 public class PieceGetActivity extends AppCompatActivity {
 
     private MediaPlayer soundEffectPlayer;
-    private LottieAnimationView lottieView; // ★★★ KonfettiView → LottieAnimationView ★★★
+    private LottieAnimationView lottieView;
 
     private final int[] pieceImages = {
             R.drawable.piece_1, R.drawable.piece_2, R.drawable.piece_3,
@@ -38,7 +34,7 @@ public class PieceGetActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_piece_get);
 
-        lottieView = findViewById(R.id.lottie_animation_view); // ★★★ 紐付け ★★★
+        lottieView = findViewById(R.id.lottie_animation_view);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -58,7 +54,6 @@ public class PieceGetActivity extends AppCompatActivity {
 
         playSoundEffect(R.raw.get_fanfare);
 
-        // ★★★ Lottieアニメーションを再生 ★★★
         if (lottieView != null) {
             lottieView.playAnimation();
         }
@@ -72,7 +67,6 @@ public class PieceGetActivity extends AppCompatActivity {
         });
     }
 
-    // ★★★ startConfetti() メソッドは丸ごと削除 (不要になったため) ★★★
 
 
     private void playSoundEffect(int soundResourceId) {

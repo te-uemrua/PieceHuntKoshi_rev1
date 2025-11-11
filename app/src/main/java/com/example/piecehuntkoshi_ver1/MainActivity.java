@@ -32,7 +32,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker; // ★★★ Marker をインポート ★★★
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
@@ -128,9 +128,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void initializeLandmarks() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
-        // ★★★ 説明文と、RENTOさんがres/drawableに追加する画像ファイル名を指定 ★★★
-        // (例: R.drawable.amby_kumamoto_img)
-        // (画像がない場合は 0 を指定)
         landmarkList.add(createLandmarkWithTimestamp(prefs, "amby_kumamoto", "アンビー熊本", new LatLng(32.880783,130.785207),200f,
                 "合志市にある大型複合商業施設。飲食店や雑貨屋が豊富。", 0));
 
@@ -144,13 +141,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 "大型遊具や芝生広場がある、家族連れに人気の公園。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "goshijuku_ato", "合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f,
-                "合志市の教育の歴史を感じられる史跡。", 0)); // 画像がない場合は 0
+                "合志市の教育の歴史を感じられる史跡。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "manga_museum", "合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f,
                 "多くのマンガを閲覧できる文化施設。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "spring_garden", "スプリングガーデン御代志", new LatLng(32.880799,130.748208), 200f,
-                "住宅地と商業施設が融合したエリア。", 0)); // 画像がない場合は 0
+                "住宅地と商業施設が融合したエリア。", 0));
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "takaba_jyouato", "竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f,
                 "歴史ある城跡で、現在は公園として整備されている。", 0));
@@ -162,9 +159,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 "スーパーマーケットを中心としたショッピングモール。", 0));
     }
 
-    // ★★★ メソッドの引数を修正 ★★★
     private Landmark createLandmarkWithTimestamp(SharedPreferences prefs, String id, String name, LatLng location, float radius, String description, int imageResourceId) {
-        Landmark landmark = new Landmark(id, name, location, radius, description, imageResourceId); // ★★★ 引数を渡す ★★★
+        Landmark landmark = new Landmark(id, name, location, radius, description, imageResourceId);
         long lastAcquired = prefs.getLong(id + LAST_ACQUIRED_PREFIX, 0);
         landmark.setLastAcquiredTimestamp(lastAcquired);
         return landmark;
@@ -224,7 +220,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // ★★★ カスタム情報ウィンドウアダプタをマップにセット ★★★
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MainActivity.this));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -272,17 +267,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void setupMapDrawings() {
         for (Landmark landmark : landmarkList) {
 
-            // ★★★ マーカーにLandmarkオブジェクトを「タグ付け」する ★★★
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(landmark.getLocation())
-                    .title(landmark.getName())); // titleは念のため残す
+                    .title(landmark.getName()));
 
-            // ★★★ これが最重要！ マーカーとデータを紐付けます ★★★
+
             if (marker != null) {
                 marker.setTag(landmark);
             }
 
-            // --- (円の描画ロジックは変更なし) ---
             CircleOptions circleOptions = new CircleOptions()
                     .center(landmark.getLocation())
                     .radius(landmark.getRadius())
@@ -294,7 +287,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             updateMapCircleColor(landmark);
         }
 
-        // --- (境界線の描画ロジックは変更なし) ---
         LatLng southWest = new LatLng(32.84, 130.72);
         LatLng northEast = new LatLng(32.93, 130.82);
         LatLngBounds koshiBounds = new LatLngBounds(southWest, northEast);

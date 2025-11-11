@@ -25,7 +25,7 @@
         android:textColor="@color/origin_yellow"
         />
 
-    <!-- ★★★ クールタイム表示用のTextViewを追加 ★★★ -->
+
     <TextView
         android:id="@+id/landmark_cooldown"
         android:layout_width="wrap_content"

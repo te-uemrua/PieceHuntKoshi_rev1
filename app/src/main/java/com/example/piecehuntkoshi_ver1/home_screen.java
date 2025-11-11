@@ -19,14 +19,13 @@ import android.widget.Toast;
 public class home_screen extends AppCompatActivity {
 
     private Button startButton;
-    private MediaPlayer mediaPlayer; // BGMプレーヤー用の変数
+    private MediaPlayer mediaPlayer;
 
     private final ActivityResultLauncher<String>
             requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             isGranted -> {
                 if (isGranted) {
-                    // Permission is granted. Update the button state.
                     updateStartButtonState();
                 } else {
                     toastMake(R.string.message2);
@@ -38,16 +37,13 @@ public class home_screen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
 
-        // BGMの初期化
-        // (R.raw.bgm は、res/raw/bgm.mp3 ファイルを指します)
-        mediaPlayer = MediaPlayer.create(this, R.raw.homebgm); // "bgm"の部分はファイル名に合わせてください
+        mediaPlayer = MediaPlayer.create(this, R.raw.homebgm);
         if (mediaPlayer != null) {
-            mediaPlayer.setLooping(true); // BGMをループ再生する設定
+            mediaPlayer.setLooping(true);
         }
 
         startButton = findViewById(R.id.start_button);
 
-        // Set up button listeners
         startButton.setOnClickListener( v -> {
             Intent intent = new Intent(home_screen.this, MainActivity.class);
             startActivity(intent);
@@ -60,17 +56,14 @@ public class home_screen extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Initial permission check
         checkLocationPermission();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Update button state every time the screen is resumed
         updateStartButtonState();
 
-        // 画面が戻ってきたらBGMを再生
         if (mediaPlayer != null && !mediaPlayer.isPlaying()) {
             mediaPlayer.start();
         }
@@ -79,7 +72,6 @@ public class home_screen extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // BGMを一時停止
         if (mediaPlayer != null && mediaPlayer.isPlaying()) {
             mediaPlayer.pause();
         }
@@ -88,7 +80,6 @@ public class home_screen extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // BGMのリソースを解放（メモリリーク防止）
         if (mediaPlayer != null) {
             mediaPlayer.release();
             mediaPlayer = null;
@@ -97,28 +88,23 @@ public class home_screen extends AppCompatActivity {
 
     private void checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Already granted
             updateStartButtonState();
         } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-            // Show rationale dialog
             new AlertDialog.Builder(this)
                     .setMessage(R.string.alert_dialog)
                     .setPositiveButton(R.string.ok, (dialog, id) -> requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION))
                     .setNegativeButton(R.string.no_thanks, (dialog, id) -> toastMake(R.string.message1))
                     .show();
         } else {
-            // Directly request permission
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
     }
 
     private void updateStartButtonState() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // If permission is granted, enable the button
             startButton.setEnabled(true);
             startButton.setAlpha(1.0f);
         } else {
-            // If permission is denied, disable the button
             startButton.setEnabled(false);
             startButton.setAlpha(0.5f);
         }

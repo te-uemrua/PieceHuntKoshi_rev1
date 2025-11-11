@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:background="@android:color/white"  tools:context=".PuzzleScreenActivity">
 
-    <!-- 1. マップ画面と同じデザインのヘッダーをここに追加 -->
+
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
@@ -38,7 +38,7 @@
 
     </LinearLayout>
 
-    <!-- 2. パズル本体（RecyclerView） -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/puzzleRecyclerView"
         android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
         app:spanCount="3"
         tools:listitem="@layout/piece_item" />
 
-    <!-- 3. マップ画面に戻るボタンなどを下部に配置 -->
+
     <Button
         android:id="@+id/back_to_map_button"
         android:layout_width="match_parent"

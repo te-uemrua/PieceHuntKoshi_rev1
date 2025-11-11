@@ -9,7 +9,6 @@
     android:background="@android:color/white"
     tools:context=".CollectionActivity">
 
-    <!-- ヘッダー部分はそのまま -->
     <LinearLayout
         android:id="@+id/header_layout"
         android:layout_width="match_parent"
@@ -39,7 +38,6 @@
             tools:text="3 / 9 収集中" />
     </LinearLayout>
 
-    <!-- RecyclerViewを元に戻す -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/collectionRecyclerView"
         android:layout_width="match_parent"
@@ -47,7 +45,6 @@
         android:layout_weight="1"
         android:padding="16dp" />
 
-    <!-- 戻るボタンはそのまま -->
     <Button
         android:id="@+id/back_to_map_from_collection_button"
         android:layout_width="match_parent"

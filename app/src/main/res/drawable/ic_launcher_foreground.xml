@@ -5,18 +5,12 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!--
-      80% に縮小
-    -->
     <group
         android:scaleX="0.8"
         android:scaleY="0.8"
         android:pivotX="54"
         android:pivotY="54">
 
-        <!--
-          グループ 1: 新しいパズルピースの形状（白）
-        -->
         <path
             android:fillColor="#FFFFFF"
             android:pathData="M 44,24
@@ -29,10 +23,6 @@
                             L 64,24
                             A 10,10 0 0,1 44,24 Z" />
 
-        <!--
-          グループ 2: オレンジ色のマップピン
-          - パズルの中心(54,54)に配置
-        -->
         <path
             android:fillColor="#FF9800"
             android:pathData="M 54,38
@@ -41,16 +31,12 @@
                         C 54,70 66,57 66,50
                         C 66,43.4 60.6,38 54,38 Z" />
 
-        <!--
-          グループ 3: ピンの中の白い円
-          - マップピンの中心に配置
-        -->
         <path
             android:fillColor="#FFFFFF"
             android:pathData="M 54,46
                         A 4,4 0 1,0 54,54
                         A 4,4 0 1,0 54,46 Z" />
 
-    </group> <!-- 縮小用グループの閉じタグ -->
+    </group> 
 
 </vector>

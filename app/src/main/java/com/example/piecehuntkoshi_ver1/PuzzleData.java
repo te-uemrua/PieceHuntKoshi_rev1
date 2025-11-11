@@ -21,7 +21,7 @@ public class PuzzleData {
     @ColumnInfo(name = "puzzle_id")
     private int puzzleId;
 
-    @ColumnInfo(name = "piece_index") // The position of the piece in the puzzle (0-8)
+    @ColumnInfo(name = "piece_index")
     private int pieceIndex;
 
     @ColumnInfo(name = "image_res_id")
@@ -30,7 +30,7 @@ public class PuzzleData {
     @ColumnInfo(name = "is_unlocked")
     private boolean isUnlocked;
 
-    // Constructor
+
     public PuzzleData(int puzzleId, int pieceIndex, int imageResId, boolean isUnlocked) {
         this.puzzleId = puzzleId;
         this.pieceIndex = pieceIndex;
@@ -38,7 +38,6 @@ public class PuzzleData {
         this.isUnlocked = isUnlocked;
     }
 
-    // Getters
     public int getId() {
         return id;
     }
@@ -59,7 +58,6 @@ public class PuzzleData {
         return isUnlocked;
     }
 
-    // Setters
     public void setId(int id) {
         this.id = id;
     }
