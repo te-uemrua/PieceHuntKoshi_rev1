@@ -1,6 +1,9 @@
 package com.example.piecehuntkoshi_ver1;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Button;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,15 +17,14 @@ import java.util.concurrent.Executors;
 
 public class PuzzleActivity extends AppCompatActivity {
 
+    // (Existing variables)
     private RecyclerView puzzleRecyclerView;
     private PuzzleAdapter puzzleAdapter;
     private List<PuzzleData> pieceList = new ArrayList<>();
     private TextView remainingPiecesText;
     private Button backToMapButton;
-
     private AppDatabase db;
     private ExecutorService databaseExecutor = Executors.newSingleThreadExecutor();
-
     private int currentPuzzleId = -1;
 
     @Override
@@ -46,56 +48,46 @@ public class PuzzleActivity extends AppCompatActivity {
 
         db = AppDatabase.getDatabase(getApplicationContext());
 
-        loadPiecesFromDatabase();
-
         backToMapButton.setOnClickListener(v -> finish());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadPiecesFromDatabase();
     }
 
     private void loadPiecesFromDatabase() {
         databaseExecutor.execute(() -> {
             List<PuzzleData> piecesFromDb = db.puzzleDao().getPiecesForPuzzle(currentPuzzleId);
-
-            if (piecesFromDb.isEmpty()) {
-                piecesFromDb = initializePieceListForPuzzle(currentPuzzleId);
-                db.puzzleDao().insertAllPieces(piecesFromDb);
-            }
-
-            List<PuzzleData> finalPiecesFromDb = piecesFromDb;
+            
             runOnUiThread(() -> {
-                updatePuzzleView(finalPiecesFromDb);
+                updatePuzzleView(piecesFromDb);
             });
         });
     }
 
+    // Simplified the view update logic
     private void updatePuzzleView(List<PuzzleData> pieces) {
+        if (pieces == null) {
+            pieces = new ArrayList<>();
+        }
+
         this.pieceList.clear();
         this.pieceList.addAll(pieces);
         puzzleAdapter.notifyDataSetChanged();
 
-        if (isPuzzleComplete(this.pieceList)) {
-            remainingPiecesText.setText(getString(R.string.puzzle_complete));
+        int remainingCount = getRemainingPieceCount(this.pieceList);
+        if (remainingCount == 0 && !this.pieceList.isEmpty()) {
+             remainingPiecesText.setText(getString(R.string.puzzle_complete));
         } else {
-            int remainingCount = getRemainingPieceCount(this.pieceList);
-            String formattedText = getString(R.string.remaining_pieces_format, remainingCount);
-            remainingPiecesText.setText(formattedText);
+             String formattedText = getString(R.string.remaining_pieces_format, remainingCount);
+             remainingPiecesText.setText(formattedText);
         }
     }
 
-    private List<PuzzleData> initializePieceListForPuzzle(int puzzleId) {
-        List<PuzzleData> localPieceList = new ArrayList<>();
-        localPieceList.add(new PuzzleData(puzzleId, 0, R.drawable.piece_1, false));
-        localPieceList.add(new PuzzleData(puzzleId, 1, R.drawable.piece_2, false));
-        localPieceList.add(new PuzzleData(puzzleId, 2, R.drawable.piece_3, false));
-        localPieceList.add(new PuzzleData(puzzleId, 3, R.drawable.piece_4, false));
-        localPieceList.add(new PuzzleData(puzzleId, 4, R.drawable.piece_5, false));
-        localPieceList.add(new PuzzleData(puzzleId, 5, R.drawable.piece_6, false));
-        localPieceList.add(new PuzzleData(puzzleId, 6, R.drawable.piece_7, false));
-        localPieceList.add(new PuzzleData(puzzleId, 7, R.drawable.piece_8, false));
-        localPieceList.add(new PuzzleData(puzzleId, 8, R.drawable.piece_9, false));
-        return localPieceList;
-    }
-
     private boolean isPuzzleComplete(List<PuzzleData> pieces) {
+        if (pieces == null || pieces.isEmpty()) return false;
         for (PuzzleData piece : pieces) {
             if (!piece.isUnlocked()) {
                 return false;
@@ -105,6 +97,7 @@ public class PuzzleActivity extends AppCompatActivity {
     }
 
     private int getRemainingPieceCount(List<PuzzleData> pieces) {
+        if (pieces == null || pieces.isEmpty()) return 9; // Show 9 if list is empty
         int remainingCount = 0;
         for (PuzzleData piece : pieces) {
             if (!piece.isUnlocked()) {

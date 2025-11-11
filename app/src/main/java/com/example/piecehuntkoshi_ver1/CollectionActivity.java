@@ -2,6 +2,8 @@ package com.example.piecehuntkoshi_ver1;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,12 +71,8 @@ public class CollectionActivity extends AppCompatActivity implements CollectionA
     @Override
     public void onPuzzleClick(Puzzle puzzle) {
         // Allow clicking only on completed puzzles
-        if (puzzle.isCompleted()) {
             Intent intent = new Intent(this, PuzzleActivity.class);
             intent.putExtra("PUZZLE_ID", puzzle.getId());
             startActivity(intent);
-        } else {
-            Toast.makeText(this, "このパズルはまだ完成していません", Toast.LENGTH_SHORT).show();
-        }
     }
 }

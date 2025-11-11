@@ -5,59 +5,54 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PieceGetActivity"
-    android:background="@drawable/gradient_background2"
-    >
+    android:background="@drawable/gradient_background"
+    tools:context=".PieceGetActivity">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_animation_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-
-        app:lottie_rawRes="@raw/confetti_animation"
         app:lottie_autoPlay="false"
         app:lottie_loop="false"
-        android:elevation="10dp"
-        android:scaleType="centerCrop" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ピースゲット!!"
-        android:textSize="40sp"
-        android:textStyle="bold"
-        android:textColor="@color/origin_blue"
-        app:layout_constraintBottom_toTopOf="@+id/piece_image_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"/>
-
-    <Button
-        android:id="@+id/backmainbutton"
-        android:layout_width="272dp"
-        android:layout_height="58dp"
-        android:layout_marginTop="32dp"
-        android:text="マップに戻る"
-        android:textSize="24sp"
-        android:textColor="@color/origin_orange"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/piece_image_view" />
+        tools:lottie_rawRes="@raw/confetti" /> <!-- Use tools namespace to avoid build error -->
 
     <ImageView
         android:id="@+id/piece_image_view"
         android:layout_width="250dp"
         android:layout_height="250dp"
-        app:layout_constraintBottom_toTopOf="@+id/backmainbutton"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        tools:srcCompat="@drawable/piece_1" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/piece_number_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/piece_image_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="ピースNo.X" />
+
+    <Button
+        android:id="@+id/backmainbutton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bordered_button_background"
+        android:text="マップに戻る"
+        android:textColor="@color/origin_orange"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

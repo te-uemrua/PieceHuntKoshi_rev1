@@ -57,12 +57,12 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Pu
             
             if (puzzle.isCompleted()) {
                 // If the puzzle is completed, show the actual thumbnail
-                puzzleThumbnail.setImageResource(puzzle.getThumbnailResId());
+                puzzleThumbnail.setImageResource(puzzle.getCompletedThumbnailResId());
                 puzzleThumbnail.setAlpha(1.0f); // Make it fully visible
             } else {
                 // If not completed, show a placeholder and make it look disabled
-                puzzleThumbnail.setImageResource(R.drawable.ic_launcher_foreground); // A generic placeholder image
-                puzzleThumbnail.setAlpha(0.3f); // Make it look greyed out
+                puzzleThumbnail.setImageResource(puzzle.getThumbnailResId()); // A generic placeholder image
+                puzzleThumbnail.setAlpha(0.5f); // Make it look greyed out
             }
 
             itemView.setOnClickListener(v -> listener.onPuzzleClick(puzzle));
