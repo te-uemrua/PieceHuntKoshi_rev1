@@ -1,4 +1,4 @@
-package com.example.piecehuntkoshi_ver1; // あなたのパッケージ名に合わせてください
+package com.example.piecehuntkoshi_ver1;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -19,6 +19,6 @@ public class SquareImageView extends AppCompatImageView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, widthMeasureSpec); // 高さを幅に合わせる
+        super.onMeasure(widthMeasureSpec, widthMeasureSpec);
     }
 }

@@ -65,7 +65,6 @@ public class CollectionActivity extends AppCompatActivity implements CollectionA
         });
     }
 
-    // The addDummyPuzzles method is no longer needed here as it's handled in AppDatabase
 
     @Override
     public void onPuzzleClick(Puzzle puzzle) {

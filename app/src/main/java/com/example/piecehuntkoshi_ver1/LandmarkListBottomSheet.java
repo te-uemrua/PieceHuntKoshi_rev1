@@ -15,9 +15,8 @@ public class LandmarkListBottomSheet extends BottomSheetDialogFragment {
 
     private static final String ARG_LANDMARKS = "landmarks";
     private ArrayList<Landmark> landmarks;
-    private LandmarkAdapter adapter; // ★★★ アダプタへの参照を保持 ★★★
+    private LandmarkAdapter adapter;
 
-    // MainActivityからデータを受け取るためのメソッド
     public static LandmarkListBottomSheet newInstance(ArrayList<Landmark> landmarks) {
         LandmarkListBottomSheet fragment = new LandmarkListBottomSheet();
         Bundle args = new Bundle();
@@ -42,14 +41,12 @@ public class LandmarkListBottomSheet extends BottomSheetDialogFragment {
         RecyclerView recyclerView = view.findViewById(R.id.landmarks_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // ★★★ アダプタをフィールドに保存 ★★★
         adapter = new LandmarkAdapter(landmarks);
         recyclerView.setAdapter(adapter);
 
         return view;
     }
 
-    // ★★★ MainActivityからアダプタを取得するためのメソッド ★★★
     public LandmarkAdapter getAdapter() {
         return adapter;
     }

@@ -20,14 +20,12 @@ public class Puzzle {
     @ColumnInfo(name = "is_completed")
     private boolean isCompleted;
 
-    // Constructor
     public Puzzle(String name, int thumbnailResId, boolean isCompleted) {
         this.name = name;
         this.thumbnailResId = thumbnailResId;
         this.isCompleted = isCompleted;
     }
 
-    // Getters
     public int getId() {
         return id;
     }
@@ -44,7 +42,6 @@ public class Puzzle {
         return isCompleted;
     }
 
-    // Setters
     public void setId(int id) {
         this.id = id;
     }
