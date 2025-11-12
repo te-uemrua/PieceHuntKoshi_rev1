@@ -14,6 +14,51 @@
         tools:layout_editor_absoluteX="56dp"
         tools:layout_editor_absoluteY="0dp" />
 
+    <Button
+        android:id="@+id/debug_reset_cooldown_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="164dp"
+        android:alpha="0.8"
+        android:backgroundTint="#808080"
+        android:padding="8dp"
+        android:text="クールタイムリセット"
+        android:textColor="@android:color/white"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/debug_add_location_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="テスト位置追加"
+        android:backgroundTint="#5A5A5A"
+        android:textColor="@android:color/white"
+        android:alpha="0.8"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="@+id/debug_reset_cooldown_button"
+        app:layout_constraintEnd_toEndOf="@+id/debug_reset_cooldown_button"
+        app:layout_constraintTop_toBottomOf="@+id/debug_reset_cooldown_button"
+        android:padding="8dp"/>
+
+    <Button
+        android:id="@+id/debug_remove_location_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="テスト位置削除"
+        android:backgroundTint="#5A5A5A"
+        android:textColor="@android:color/white"
+        android:alpha="0.8"
+        android:textSize="10sp"
+        app:layout_constraintStart_toStartOf="@+id/debug_add_location_button"
+        app:layout_constraintEnd_toEndOf="@+id/debug_add_location_button"
+        app:layout_constraintTop_toBottomOf="@+id/debug_add_location_button"
+        android:padding="8dp"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/list_button"
         android:layout_width="wrap_content"
