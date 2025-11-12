@@ -12,7 +12,6 @@ import android.graphics.drawable.AnimationDrawable;
 import android.location.Location;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
@@ -37,8 +36,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
+// Removed ExecutorService imports as they are no longer needed
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private MediaPlayer soundEffectPlayer;
 
+    // Removed DB-related member variables
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,11 +90,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
         });
 
+        // --- Reverted to original, simple OnClickListener ---
         viewPuzzleButton = findViewById(R.id.view_puzzle_button);
         viewPuzzleButton.setOnClickListener(v -> {
             playSoundEffect(R.raw.btn);
             Intent intent = new Intent(MainActivity.this, PuzzleActivity.class);
-            intent.putExtra("PUZZLE_ID", 1);
+            intent.putExtra("PUZZLE_ID", 1); // Always open Puzzle #1
             startActivity(intent);
         });
 

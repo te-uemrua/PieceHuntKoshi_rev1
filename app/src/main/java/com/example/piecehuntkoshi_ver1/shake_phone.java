@@ -21,18 +21,16 @@ import java.util.concurrent.Executors;
 
 public class shake_phone extends AppCompatActivity implements SensorEventListener {
 
+    // (Existing variables)
     private SensorManager sensorManager;
     private Sensor accelerometer;
     private float lastX, lastY, lastZ;
     private long lastUpdate = 0;
     private static final int SHAKE_THRESHOLD = 800;
-
     private AppDatabase db;
     private ExecutorService databaseExecutor = Executors.newSingleThreadExecutor();
-
     private boolean pieceAcquired = false;
     private TextView instructionText;
-
     private String landmarkId;
     private String landmarkName;
 
@@ -42,7 +40,6 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
         setContentView(R.layout.shake_phone);
 
         instructionText = findViewById(R.id.instruction_text);
-
 
         landmarkId = getIntent().getStringExtra("LANDMARK_ID");
         landmarkName = getIntent().getStringExtra("LANDMARK_NAME");
@@ -74,7 +71,6 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
                 if (speed > SHAKE_THRESHOLD) {
                     acquirePiece();
                 }
-
                 lastX = x;
                 lastY = y;
                 lastZ = z;
@@ -83,74 +79,74 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
     }
 
     private void acquirePiece() {
-        if (landmarkId == null || landmarkId.isEmpty()) {
-            Toast.makeText(this, "エラー: 取得対象のランドマークIDがありません", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
+        if (pieceAcquired) return;
         pieceAcquired = true;
 
         Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
 
         databaseExecutor.execute(() -> {
-            try {
-                int randomPiece = new java.util.Random().nextInt(9);
-                db.puzzleDao().unlockPieceById(randomPiece);
+            Puzzle currentPuzzle = db.puzzleDao().getFirstUncompletedPuzzle();
 
+            if (currentPuzzle == null) {
+                runOnUiThread(() -> Toast.makeText(this, "全てのパズルが完成しています！", Toast.LENGTH_LONG).show());
+                finish();
+                return;
+            }
+
+            PuzzleData pieceToUnlock = db.puzzleDao().getARandomUnlockedPiece(currentPuzzle.getId());
+
+            if (pieceToUnlock == null) {
+                 // This case should not happen anymore with the new DB logic, but as a safeguard.
+                runOnUiThread(() -> Toast.makeText(this, "エラー：アンロックするピースが見つかりません。", Toast.LENGTH_LONG).show());
+                finish();
+                return;
+            }
+
+            db.puzzleDao().unlockPieceById(pieceToUnlock.getId());
+
+            if (landmarkId != null && !landmarkId.isEmpty()) {
                 SharedPreferences prefs = getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
                 prefs.edit().putLong(landmarkId + MainActivity.LAST_ACQUIRED_PREFIX, System.currentTimeMillis()).apply();
-
-                checkPuzzleCompletion(randomPiece);
-
-                runOnUiThread(() -> {
-                    instructionText.setText("ピースをゲット！");
-                    Toast.makeText(shake_phone.this,
-                            "ピース No." + (randomPiece + 1) + " を手に入れた！",
-                            Toast.LENGTH_LONG).show();
-
-                    Intent intent = new Intent(shake_phone.this, PieceGetActivity.class);
-                    intent.putExtra("pieceNumber", randomPiece);
-                    startActivity(intent);
-
-                    new android.os.Handler().postDelayed(this::finish, 2000);
-                });
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                runOnUiThread(() ->
-                        Toast.makeText(shake_phone.this,
-                                "ピース取得中にエラーが発生しました",
-                                Toast.LENGTH_SHORT).show());
             }
+            
+            boolean justCompleted = checkPuzzleCompletion(currentPuzzle.getId());
+
+            runOnUiThread(() -> {
+                instructionText.setText("ピースをゲット！");
+                Toast.makeText(this, currentPuzzle.getName() + " のピース No." + (pieceToUnlock.getPieceIndex() + 1) + " を手に入れた！", Toast.LENGTH_LONG).show();
+                
+                // Pass all necessary info to PieceGetActivity
+                Intent intent = new Intent(shake_phone.this, PieceGetActivity.class);
+                intent.putExtra("pieceNumber", pieceToUnlock.getPieceIndex());
+                intent.putExtra("isPuzzleCompleted", justCompleted);
+                intent.putExtra("completedPuzzleId", currentPuzzle.getId()); // Pass the ID
+                intent.putExtra("completedPuzzleImage", currentPuzzle.getCompletedThumbnailResId());
+
+                startActivity(intent);
+                finish(); // Finish this activity immediately
+            });
         });
     }
 
-    private void checkPuzzleCompletion(int unlockedPieceId) {
-        try {
-            int puzzleId = db.puzzleDao().getPuzzleIdForPiece(unlockedPieceId);
-            if (puzzleId > 0) {
-                List<PuzzleData> allPieces = db.puzzleDao().getPiecesForPuzzle(puzzleId);
-                boolean allUnlocked = true;
-                for (PuzzleData piece : allPieces) {
-                    if (!piece.isUnlocked()) {
-                        allUnlocked = false;
-                        break;
-                    }
-                }
-                if (allUnlocked) {
-                    db.puzzleDao().updatePuzzleAsCompleted(puzzleId);
-                }
+    private boolean checkPuzzleCompletion(int puzzleId) {
+        List<PuzzleData> pieces = db.puzzleDao().getPiecesForPuzzle(puzzleId);
+        boolean allUnlocked = true;
+        for(PuzzleData piece : pieces) {
+            if(!piece.isUnlocked()) {
+                allUnlocked = false;
+                break;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+        if(allUnlocked) {
+            db.puzzleDao().updatePuzzleAsCompleted(puzzleId);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-    }
+    public void onAccuracyChanged(Sensor sensor, int accuracy) { }
 
     @Override
     protected void onPause() {
