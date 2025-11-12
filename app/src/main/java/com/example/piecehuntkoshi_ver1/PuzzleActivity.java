@@ -60,7 +60,13 @@ public class PuzzleActivity extends AppCompatActivity {
     private void loadPiecesFromDatabase() {
         databaseExecutor.execute(() -> {
             List<PuzzleData> piecesFromDb = db.puzzleDao().getPiecesForPuzzle(currentPuzzleId);
-            
+
+            if(piecesFromDb.isEmpty()){
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    loadPiecesFromDatabase();
+                }, 500);
+                return;
+            }
             runOnUiThread(() -> {
                 updatePuzzleView(piecesFromDb);
             });
