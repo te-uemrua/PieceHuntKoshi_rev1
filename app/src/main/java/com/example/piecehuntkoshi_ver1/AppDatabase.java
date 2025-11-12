@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-// versionを7に更新し、DBを再構築
-@Database(entities = {Puzzle.class, PuzzleData.class}, version = 7, exportSchema = false)
+@Database(entities = {Puzzle.class, PuzzleData.class}, version = 8, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract PuzzleDao puzzleDao();
@@ -44,7 +43,7 @@ public abstract class AppDatabase extends RoomDatabase {
 
                 // --- 全てのパズルとピースの初期データをここで一度に作成 --- 
 
-                // Puzzle 1: 熊本高専 (今回は未完成からスタート)
+                // Puzzle 1: 熊本高専
                 dao.insertPuzzle(new Puzzle("熊本高専", R.drawable.question, R.drawable.piece_1complete, false));
                 List<PuzzleData> pieces1 = new ArrayList<>();
                 int[] puzzle1Images = { 
@@ -53,7 +52,6 @@ public abstract class AppDatabase extends RoomDatabase {
                     R.drawable.piece_7, R.drawable.piece_8, R.drawable.piece_9 
                 };
                 for (int i = 0; i < 9; i++) {
-                    // PuzzleID=1, Index=0~8, Image, isUnlocked=false
                     pieces1.add(new PuzzleData(1, i, puzzle1Images[i], false));
                 }
                 dao.insertAllPieces(pieces1);
