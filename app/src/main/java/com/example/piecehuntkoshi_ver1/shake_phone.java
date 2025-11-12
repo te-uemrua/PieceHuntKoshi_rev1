@@ -8,6 +8,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.widget.TextView;
@@ -97,8 +99,12 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
             PuzzleData pieceToUnlock = db.puzzleDao().getARandomUnlockedPiece(currentPuzzle.getId());
 
             if (pieceToUnlock == null) {
-                 // This case should not happen anymore with the new DB logic, but as a safeguard.
-                runOnUiThread(() -> Toast.makeText(this, "エラー：アンロックするピースが見つかりません。", Toast.LENGTH_LONG).show());
+                 boolean puzzleWasJustCompleted = checkPuzzleCompletion(currentPuzzle.getId());
+                if(puzzleWasJustCompleted){
+                     runOnUiThread(() -> Toast.makeText(this, currentPuzzle.getName() + " は既に完成しています！", Toast.LENGTH_LONG).show());
+                } else {
+                     runOnUiThread(() -> Toast.makeText(this, "エラー：このパズルの未取得ピースが見つかりません。", Toast.LENGTH_LONG).show());
+                }
                 finish();
                 return;
             }
@@ -116,21 +122,25 @@ public class shake_phone extends AppCompatActivity implements SensorEventListene
                 instructionText.setText("ピースをゲット！");
                 Toast.makeText(this, currentPuzzle.getName() + " のピース No." + (pieceToUnlock.getPieceIndex() + 1) + " を手に入れた！", Toast.LENGTH_LONG).show();
                 
-                // Pass all necessary info to PieceGetActivity
                 Intent intent = new Intent(shake_phone.this, PieceGetActivity.class);
-                intent.putExtra("pieceNumber", pieceToUnlock.getPieceIndex());
+                // Pass the specific image resource ID instead of the index
+                intent.putExtra("pieceImageResId", pieceToUnlock.getImageResId()); 
+                intent.putExtra("pieceNumberForDisplay", pieceToUnlock.getPieceIndex() + 1);
+
                 intent.putExtra("isPuzzleCompleted", justCompleted);
-                intent.putExtra("completedPuzzleId", currentPuzzle.getId()); // Pass the ID
+                intent.putExtra("completedPuzzleId", currentPuzzle.getId());
                 intent.putExtra("completedPuzzleImage", currentPuzzle.getCompletedThumbnailResId());
 
                 startActivity(intent);
-                finish(); // Finish this activity immediately
+                finish();
             });
         });
     }
 
     private boolean checkPuzzleCompletion(int puzzleId) {
         List<PuzzleData> pieces = db.puzzleDao().getPiecesForPuzzle(puzzleId);
+        if (pieces == null || pieces.isEmpty()) return false;
+
         boolean allUnlocked = true;
         for(PuzzleData piece : pieces) {
             if(!piece.isUnlocked()) {

@@ -33,13 +33,17 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Pu
 
     @Override
     public void onBindViewHolder(@NonNull PuzzleViewHolder holder, int position) {
-        Puzzle currentPuzzle = puzzleList.get(position);
-        holder.bind(currentPuzzle, listener);
+        // It's possible for the list to be modified in another thread.
+        // Add a check to prevent IndexOutOfBoundsException.
+        if (position >= 0 && position < puzzleList.size()) {
+            Puzzle currentPuzzle = puzzleList.get(position);
+            holder.bind(currentPuzzle, listener);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return puzzleList.size();
+        return puzzleList != null ? puzzleList.size() : 0;
     }
 
     public static class PuzzleViewHolder extends RecyclerView.ViewHolder {
@@ -53,16 +57,19 @@ public class CollectionAdapter extends RecyclerView.Adapter<CollectionAdapter.Pu
         }
 
         public void bind(final Puzzle puzzle, final OnPuzzleClickListener listener) {
+            // Guard clause to prevent NullPointerException if puzzle is null
+            if (puzzle == null) {
+                return;
+            }
+
             puzzleName.setText(puzzle.getName());
             
             if (puzzle.isCompleted()) {
-                // If the puzzle is completed, show the actual thumbnail
                 puzzleThumbnail.setImageResource(puzzle.getCompletedThumbnailResId());
-                puzzleThumbnail.setAlpha(1.0f); // Make it fully visible
+                puzzleThumbnail.setAlpha(1.0f);
             } else {
-                // If not completed, show a placeholder and make it look disabled
-                puzzleThumbnail.setImageResource(puzzle.getThumbnailResId()); // A generic placeholder image
-                puzzleThumbnail.setAlpha(0.5f); // Make it look greyed out
+                puzzleThumbnail.setImageResource(puzzle.getThumbnailResId());
+                puzzleThumbnail.setAlpha(0.5f);
             }
 
             itemView.setOnClickListener(v -> listener.onPuzzleClick(puzzle));
