@@ -61,4 +61,6 @@ public interface PuzzleDao {
     
     @Query("DELETE FROM puzzle_pieces")
     void deleteAllPieces();
+
 }
+
