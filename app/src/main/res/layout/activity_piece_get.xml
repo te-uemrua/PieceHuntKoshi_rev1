@@ -5,54 +5,58 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background"
+    android:background="@drawable/gradient_background2"
     tools:context=".PieceGetActivity">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_animation_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:lottie_autoPlay="false"
-        app:lottie_loop="false"
-        tools:lottie_rawRes="@raw/confetti" /> <!-- Use tools namespace to avoid build error -->
-
-    <ImageView
-        android:id="@+id/piece_image_view"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:elevation="10dp"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
+        app:lottie_autoPlay="false"
+        app:lottie_loop="false"
+        app:lottie_rawRes="@raw/confetti_animation" />
 
     <TextView
         android:id="@+id/piece_number_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:textColor="@android:color/white"
-        android:textSize="24sp"
+        android:textColor="@color/origin_blue"
+        android:textSize="40sp"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@+id/piece_image_view"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/piece_image_view"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="ピースNo.X" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="ピースゲット!!" />
+
+    <ImageView
+        android:id="@+id/piece_image_view"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        app:layout_constraintBottom_toTopOf="@+id/backmainbutton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/piece_number_text"
+        tools:srcCompat="@drawable/piece_1" />
 
     <Button
         android:id="@+id/backmainbutton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="32dp"
-        android:background="@drawable/bordered_button_background"
-        android:text="マップに戻る"
+        android:layout_width="272dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="32dp"
         android:textColor="@color/origin_orange"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/piece_image_view"
+        tools:text="マップに戻る" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
