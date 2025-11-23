@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
 
 public class PuzzleActivity extends AppCompatActivity {
 
-    // (Existing variables)
+
     private RecyclerView puzzleRecyclerView;
     private PuzzleAdapter puzzleAdapter;
     private List<PuzzleData> pieceList = new ArrayList<>();
@@ -73,7 +73,7 @@ public class PuzzleActivity extends AppCompatActivity {
         });
     }
 
-    // Simplified the view update logic
+
     private void updatePuzzleView(List<PuzzleData> pieces) {
         if (pieces == null) {
             pieces = new ArrayList<>();
@@ -103,7 +103,7 @@ public class PuzzleActivity extends AppCompatActivity {
     }
 
     private int getRemainingPieceCount(List<PuzzleData> pieces) {
-        if (pieces == null || pieces.isEmpty()) return 9; // Show 9 if list is empty
+        if (pieces == null || pieces.isEmpty()) return 9;
         int remainingCount = 0;
         for (PuzzleData piece : pieces) {
             if (!piece.isUnlocked()) {

@@ -68,15 +68,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private AppDatabase db;
     private ExecutorService databaseExecutor = Executors.newSingleThreadExecutor();
 
-
     private Button debugResetButton;
     private Button debugAddLocationButton;
     private Button debugRemoveLocationButton;
     private Landmark debugLandmark = null;
     private Marker debugMarker = null;
     private Circle debugCircle = null;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +99,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             startActivity(intent);
         });
 
+        /*
+         * 生成手法: プロンプトによるコード生成（データベースとパズル処理の連携ロジック）
+         * 生成日: 2025/10/15
+         * 使用モデル: Gemini
+         */
         viewPuzzleButton = findViewById(R.id.view_puzzle_button);
         viewPuzzleButton.setOnClickListener(v -> {
             playSoundEffect(R.raw.btn);
@@ -112,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 if (currentPuzzle != null) {
                     puzzleIdToShow = currentPuzzle.getId();
                 } else {
-
                     runOnUiThread(() -> {
                         Toast.makeText(MainActivity.this, "すべてのパズルが完成しています！", Toast.LENGTH_SHORT).show();
                     });
@@ -127,19 +128,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         debugResetButton = findViewById(R.id.debug_reset_cooldown_button);
-        debugResetButton.setOnClickListener(v -> {
-            resetAllCooldowns();
-        });
+        debugResetButton.setOnClickListener(v -> resetAllCooldowns());
 
         debugAddLocationButton = findViewById(R.id.debug_add_location_button);
-        debugAddLocationButton.setOnClickListener(v -> {
-            addDebugLandmark();
-        });
+        debugAddLocationButton.setOnClickListener(v -> addDebugLandmark());
 
         debugRemoveLocationButton = findViewById(R.id.debug_remove_location_button);
-        debugRemoveLocationButton.setOnClickListener(v -> {
-            removeDebugLandmark();
-        });
+        debugRemoveLocationButton.setOnClickListener(v -> removeDebugLandmark());
 
 
         FloatingActionButton listButton = findViewById(R.id.list_button);
@@ -155,8 +150,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         initializeLandmarks();
 
+        /*
+         * 生成手法: プロンプトによるコード生成（位置情報のコールバック処理）
+         * 生成日: 2025/09/20
+         * 使用モデル: Gemini
+         */
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
@@ -171,37 +170,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
     }
 
+    /*
+     * 生成手法: プロンプトによるコード生成（ランドマークデータの初期化とSharedPreferences連携）
+     * 生成日: 2025/09/10
+     * 使用モデル: Gemini
+     */
     private void initializeLandmarks() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
 
         landmarkList.add(createLandmarkWithTimestamp(prefs, "amby_kumamoto", "アンビー熊本", new LatLng(32.880783,130.785207),200f,
                 "合志市にある大型複合商業施設。飲食店や雑貨屋が豊富。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "classsino_marche", "クラッシーノマルシェ", new LatLng(32.891637,130.732765),200f,
                 "地元の新鮮な野菜や特産品が並ぶマルシェ。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "country_park", "熊本県農業カントリーパーク", new LatLng(32.8900575, 130.7595619), 500f,
                 "広大な敷地を持つ農業公園。イベントも多数開催。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "genki_no_mori", "元気の森公園", new LatLng(32.866013,130.76833), 400f,
                 "大型遊具や芝生広場がある、家族連れに人気の公園。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "goshijuku_ato", "合志義塾跡", new LatLng(32.9163671, 130.7458907), 200f,
                 "合志市の教育の歴史を感じられる史跡。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "manga_museum", "合志マンガミュージアム", new LatLng(32.891069,130.745138), 200f,
                 "多くのマンガを閲覧できる文化施設。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "spring_garden", "スプリングガーデン御代志", new LatLng(32.880799,130.748208), 200f,
                 "住宅地と商業施設が融合したエリア。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "takaba_jyouato", "竹迫城跡公園", new LatLng(32.89896389, 130.79429999), 200f,
                 "歴史ある城跡で、現在は公園として整備されている。", 0));
-
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "myosenji_park", "妙泉寺公園", new LatLng(32.858651,130.732413), 100f,
                 "桜やツツジが美しい、市民の憩いの場。", 0));
-
         landmarkList.add(createLandmarkWithTimestamp(prefs, "yumemall_koshi", "ゆめモール合志", new LatLng(32.902321,130.762525), 100f,
                 "スーパーマーケットを中心としたショッピングモール。", 0));
     }
@@ -220,13 +214,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         startLocationChecks();
     }
 
+    /*
+     * 生成手法: プロンプトによるコード生成（状態更新と再描画ロジック）
+     * 生成日: 2025/11/02
+     * 使用モデル: Gemini
+     */
     private void reloadDataAndRefreshMap() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         boolean needsRefresh = false;
 
         for (Landmark landmark : landmarkList) {
             long newTimestamp = prefs.getLong(landmark.getLandmarkId() + LAST_ACQUIRED_PREFIX, 0);
-
             boolean wasOnCooldown = landmark.isOnCooldown();
             landmark.setLastAcquiredTimestamp(newTimestamp);
             boolean isNowOnCooldown = landmark.isOnCooldown();
@@ -239,23 +237,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-
         if (debugLandmark != null && debugCircle != null) {
             long newTimestamp = prefs.getLong(debugLandmark.getLandmarkId() + LAST_ACQUIRED_PREFIX, 0);
-
             boolean wasOnCooldown = debugLandmark.isOnCooldown();
             debugLandmark.setLastAcquiredTimestamp(newTimestamp);
             boolean isNowOnCooldown = debugLandmark.isOnCooldown();
 
             if (wasOnCooldown != isNowOnCooldown) {
-                if (isNowOnCooldown) {
-                    debugCircle.setFillColor(COLOR_BLUE_TRANSLUCENT);
-                } else {
-                    debugCircle.setFillColor(COLOR_RED_TRANSLUCENT);
-                }
+                debugCircle.setFillColor(isNowOnCooldown ? COLOR_BLUE_TRANSLUCENT : COLOR_RED_TRANSLUCENT);
             }
         }
-
 
         if (needsRefresh && bottomSheet != null && bottomSheet.getAdapter() != null) {
             bottomSheet.getAdapter().notifyDataSetChanged();
@@ -284,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
         mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter(MainActivity.this));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -295,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     LOCATION_PERMISSION_REQUEST_CODE);
         }
-
         setupMapDrawings();
     }
 
@@ -317,7 +306,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             mMap.setMyLocationEnabled(true);
-
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
                 if (location != null) {
                     LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -329,18 +317,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /*
+     * 生成手法: プロンプトによるコード生成（Google Maps APIを用いた描画処理）
+     * 生成日: 2025/09/25
+     * 使用モデル: Gemini
+     */
     private void setupMapDrawings() {
         for (Landmark landmark : landmarkList) {
-
             Marker marker = mMap.addMarker(new MarkerOptions()
                     .position(landmark.getLocation())
                     .title(landmark.getName()));
-
-
             if (marker != null) {
                 marker.setTag(landmark);
             }
-
             CircleOptions circleOptions = new CircleOptions()
                     .center(landmark.getLocation())
                     .radius(landmark.getRadius())
@@ -357,6 +346,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LatLngBounds koshiBounds = new LatLngBounds(southWest, northEast);
         mMap.setLatLngBoundsForCameraTarget(koshiBounds);
         mMap.setMinZoomPreference(12.0f);
+
         PolygonOptions koshiBorderMoreDetailed = new PolygonOptions()
                 .add(new LatLng(32.9298, 130.7655)).add(new LatLng(32.9285, 130.7760))
                 .add(new LatLng(32.9221, 130.7831)).add(new LatLng(32.9174, 130.7953))
@@ -378,15 +368,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void updateMapCircleColor(Landmark landmark) {
-        if (landmark.getGoogleMapCircle() == null) {
-            return;
-        }
-
-        if (landmark.isOnCooldown()) {
-            landmark.getGoogleMapCircle().setFillColor(COLOR_BLUE_TRANSLUCENT);
-        } else {
-            landmark.getGoogleMapCircle().setFillColor(COLOR_RED_TRANSLUCENT);
-        }
+        if (landmark.getGoogleMapCircle() == null) return;
+        landmark.getGoogleMapCircle().setFillColor(landmark.isOnCooldown() ? COLOR_BLUE_TRANSLUCENT : COLOR_RED_TRANSLUCENT);
     }
 
     private void startLocationChecks() {
@@ -399,10 +382,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
-        fusedLocationClient.requestLocationUpdates(locationRequest,
-                locationCallback,
-                Looper.getMainLooper());
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
     }
 
     private void stopLocationChecks() {
@@ -411,8 +391,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    /*
+     * 生成手法: プロンプトによるコード生成（位置判定ロジック）
+     * 生成日: 2025/10/05
+     * 使用モデル: Gemini
+     */
     private void checkDistanceToLandmarks(Location location) {
-
         Landmark closestLandmarkInArea = null;
         float minDistance = Float.MAX_VALUE;
         boolean needsListUpdate = false;
@@ -438,7 +422,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
-
         if (debugLandmark != null) {
             float[] results = new float[1];
             Location.distanceBetween(
@@ -446,17 +429,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     debugLandmark.getLocation().latitude, debugLandmark.getLocation().longitude,
                     results);
             float distanceInMeters = results[0];
-
             debugLandmark.setDistance(distanceInMeters);
-
             if (distanceInMeters < debugLandmark.getRadius()) {
                 if (distanceInMeters < minDistance) {
-
                     closestLandmarkInArea = debugLandmark;
                 }
             }
         }
-
 
         if (needsListUpdate && bottomSheet != null && bottomSheet.getAdapter() != null) {
             bottomSheet.getAdapter().notifyDataSetChanged();
@@ -464,28 +443,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         String newState;
         if (closestLandmarkInArea != null) {
-            if (closestLandmarkInArea.isOnCooldown()) {
-                newState = "COOLDOWN";
-                currentActiveLandmark = closestLandmarkInArea;
-            } else {
-                newState = "AVAILABLE";
-                currentActiveLandmark = closestLandmarkInArea;
-            }
+            newState = closestLandmarkInArea.isOnCooldown() ? "COOLDOWN" : "AVAILABLE";
+            currentActiveLandmark = closestLandmarkInArea;
         } else {
             newState = "NONE";
             currentActiveLandmark = null;
         }
 
-        if (newState.equals(currentAreaState)) {
-            return;
-        }
+        if (newState.equals(currentAreaState)) return;
 
         if (newState.equals("AVAILABLE") || newState.equals("COOLDOWN")) {
             playSoundEffect(R.raw.in);
         }
 
         currentAreaState = newState;
-
         if (getPieceButton == null) return;
 
         switch (newState) {
@@ -493,32 +464,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 getPieceButton.setBackgroundResource(R.drawable.rainbow_animation);
                 rainbowAnimation = (AnimationDrawable) getPieceButton.getBackground();
                 if (rainbowAnimation != null) rainbowAnimation.start();
-
                 getPieceButton.setVisibility(View.VISIBLE);
                 getPieceButton.setText("ピースをゲット!!");
                 getPieceButton.setEnabled(true);
-
                 Toast.makeText(MainActivity.this, currentActiveLandmark.getName() + " のエリアに入りました！", Toast.LENGTH_SHORT).show();
                 break;
-
             case "COOLDOWN":
                 if (rainbowAnimation != null) rainbowAnimation.stop();
                 rainbowAnimation = null;
-
                 getPieceButton.setBackgroundResource(R.drawable.bordered_button_background);
                 getPieceButton.setVisibility(View.VISIBLE);
                 getPieceButton.setText("クールタイム中");
                 getPieceButton.setEnabled(false);
-
                 Toast.makeText(MainActivity.this, "クールタイム中のエリアです", Toast.LENGTH_SHORT).show();
                 break;
-
             case "NONE":
             default:
                 getPieceButton.setVisibility(View.GONE);
                 if (rainbowAnimation != null) rainbowAnimation.stop();
                 rainbowAnimation = null;
-
                 getPieceButton.setBackgroundResource(R.drawable.bordered_button_background);
                 getPieceButton.setEnabled(true);
                 break;
@@ -530,7 +494,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             soundEffectPlayer.release();
             soundEffectPlayer = null;
         }
-
         soundEffectPlayer = MediaPlayer.create(this, soundResourceId);
         if (soundEffectPlayer != null) {
             soundEffectPlayer.setOnCompletionListener(mp -> {
@@ -541,8 +504,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
-
+    /*
+     * 生成手法: プロンプトによるコード生成（デバッグ機能の実装）
+     * 生成日: 2025/11/10
+     * 使用モデル: Gemini
+     */
     private void resetAllCooldowns() {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -560,20 +526,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 debugCircle.setFillColor(COLOR_RED_TRANSLUCENT);
             }
         }
-
         editor.apply();
-
         checkCurrentLocationDistance();
-
         Toast.makeText(this, "全クールタイムをリセットしました", Toast.LENGTH_SHORT).show();
     }
 
     private void checkCurrentLocationDistance() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
-                if (location != null) {
-                    checkDistanceToLandmarks(location);
-                }
+                if (location != null) checkDistanceToLandmarks(location);
             });
         }
     }
@@ -592,12 +553,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         debugLandmark = createLandmarkWithTimestamp(prefs, debugId, "テスト位置 (高専)", debugLatLng, debugRadius, "デバッグ用のテスト位置", 0);
 
         if (mMap != null) {
-            debugMarker = mMap.addMarker(new MarkerOptions()
-                    .position(debugLandmark.getLocation())
-                    .title(debugLandmark.getName()));
-            if (debugMarker != null) {
-                debugMarker.setTag(debugLandmark);
-            }
+            debugMarker = mMap.addMarker(new MarkerOptions().position(debugLandmark.getLocation()).title(debugLandmark.getName()));
+            if (debugMarker != null) debugMarker.setTag(debugLandmark);
 
             CircleOptions circleOptions = new CircleOptions()
                     .center(debugLandmark.getLocation())
@@ -612,7 +569,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 debugCircle.setFillColor(COLOR_RED_TRANSLUCENT);
             }
         }
-
         checkCurrentLocationDistance();
         Toast.makeText(this, "テスト位置を追加しました", Toast.LENGTH_SHORT).show();
     }
@@ -622,7 +578,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Toast.makeText(this, "テスト位置は追加されていません", Toast.LENGTH_SHORT).show();
             return;
         }
-
         if (debugCircle != null) {
             debugCircle.remove();
             debugCircle = null;
@@ -631,11 +586,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             debugMarker.remove();
             debugMarker = null;
         }
-
         debugLandmark = null;
-
         checkCurrentLocationDistance();
         Toast.makeText(this, "テスト位置を削除しました", Toast.LENGTH_SHORT).show();
     }
-
 }

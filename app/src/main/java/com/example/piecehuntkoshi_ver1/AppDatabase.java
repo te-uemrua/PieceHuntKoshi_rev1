@@ -25,7 +25,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "puzzle_database")
                             .fallbackToDestructiveMigration()
-                            .addCallback(sRoomDatabaseCallback) // データベース作成時に初期データを投入する
+                            .addCallback(sRoomDatabaseCallback)
                             .build();
                 }
             }
@@ -41,9 +41,9 @@ public abstract class AppDatabase extends RoomDatabase {
             Executors.newSingleThreadExecutor().execute(() -> {
                 PuzzleDao dao = INSTANCE.puzzleDao();
 
-                // --- 全てのパズルとピースの初期データをここで一度に作成 --- 
 
-                // Puzzle 1: 熊本高専
+
+
                 dao.insertPuzzle(new Puzzle("熊本高専", R.drawable.question, R.drawable.piece_1complete, false));
                 List<PuzzleData> pieces1 = new ArrayList<>();
                 int[] puzzle1Images = { 
@@ -56,7 +56,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 }
                 dao.insertAllPieces(pieces1);
 
-                // Puzzle 2: 教室
+
                 dao.insertPuzzle(new Puzzle("教室", R.drawable.question, R.drawable.piece_2complete, false));
                 List<PuzzleData> pieces2 = new ArrayList<>();
                 int[] puzzle2Images = { 
@@ -69,7 +69,7 @@ public abstract class AppDatabase extends RoomDatabase {
                 }
                 dao.insertAllPieces(pieces2);
 
-                // Puzzle 3: 大阪？
+
                 dao.insertPuzzle(new Puzzle("大阪？", R.drawable.question, R.drawable.piece_3complete, false));
                 List<PuzzleData> pieces3 = new ArrayList<>();
                 int[] puzzle3Images = { 

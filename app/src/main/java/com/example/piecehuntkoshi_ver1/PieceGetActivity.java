@@ -19,7 +19,7 @@ public class PieceGetActivity extends AppCompatActivity {
     private LottieAnimationView lottieView;
     private TextView pieceNumberText;
 
-    // The fixed array of piece images is no longer needed.
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,16 +33,16 @@ public class PieceGetActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         
-        // This is now the primary way to get piece info
+
         int pieceImageResId = intent.getIntExtra("pieceImageResId", 0);
         int pieceNumberForDisplay = intent.getIntExtra("pieceNumberForDisplay", 0);
 
-        // This is for the puzzle completion flow
+
         int pieceNumber = intent.getIntExtra("pieceNumber", -2); 
         boolean isPuzzleCompleted = intent.getBooleanExtra("isPuzzleCompleted", false);
 
 
-        // --- Flow for Puzzle Completion --- 
+
         if (pieceNumber == -1) {
             int completedImageRes = intent.getIntExtra("completedPuzzleImage", 0);
             if (completedImageRes != 0) {
@@ -58,7 +58,7 @@ public class PieceGetActivity extends AppCompatActivity {
                 finish();
             });
 
-        // --- Flow for REGULAR Piece Get ---
+
         } else if (pieceImageResId != 0) { 
             pieceImageView.setImageResource(pieceImageResId);
             pieceNumberText.setText("ピースNo." + pieceNumberForDisplay);
